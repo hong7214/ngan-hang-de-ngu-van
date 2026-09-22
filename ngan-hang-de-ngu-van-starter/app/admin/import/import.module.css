@@ -1,0 +1,201 @@
+.page {
+  min-height: 100vh;
+  background: #f4f7fa;
+  padding: 35px 18px 70px;
+  color: #243647;
+}
+
+.container {
+  max-width: 1150px;
+  margin: auto;
+}
+
+.back {
+  color: #23689a;
+  text-decoration: none;
+  font-weight: 700;
+}
+
+.page h1 {
+  margin: 18px 0 5px;
+  font-size: 36px;
+  color: #183d60;
+}
+
+.description {
+  color: #667585;
+  margin-bottom: 25px;
+}
+
+.uploadBox {
+  background: white;
+  padding: 22px;
+  border-radius: 16px;
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  gap: 20px;
+  border: 1px solid #e1e6eb;
+}
+
+.uploadBox label {
+  display: block;
+  font-weight: 700;
+  margin-bottom: 7px;
+}
+
+.uploadBox select,
+.card input,
+.card select {
+  width: 100%;
+  padding: 11px;
+  border: 1px solid #d3dbe3;
+  border-radius: 9px;
+  background: white;
+}
+
+.fileArea {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  flex-wrap: wrap;
+}
+
+.fileButton {
+  background: #246b9e;
+  color: white;
+  padding: 13px 18px;
+  border-radius: 10px;
+  cursor: pointer;
+  margin: 0 !important;
+}
+
+.fileArea small {
+  color: #72808e;
+}
+
+.notice,
+.warning {
+  margin-top: 18px;
+  padding: 15px;
+  border-radius: 11px;
+}
+
+.notice {
+  background: #eaf4fb;
+  color: #245f89;
+}
+
+.warning {
+  background: #fff5dc;
+  color: #75571a;
+}
+
+.topActions {
+  margin: 25px 0 15px;
+  background: white;
+  padding: 15px 18px;
+  border-radius: 13px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.topActions label {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+
+.topActions button {
+  border: 0;
+  background: #1f6c48;
+  color: white;
+  padding: 12px 18px;
+  border-radius: 9px;
+  cursor: pointer;
+  font-weight: 800;
+}
+
+.cards {
+  display: grid;
+  gap: 16px;
+}
+
+.card {
+  background: white;
+  border: 1px solid #e0e5ea;
+  border-radius: 15px;
+  padding: 18px;
+}
+
+.cardHeader {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.cardHeader input {
+  width: 18px;
+  height: 18px;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: 2fr 100px 1fr;
+  gap: 12px;
+}
+
+.row label {
+  display: block;
+  font-size: 13px;
+  font-weight: 700;
+  margin-bottom: 5px;
+}
+
+.itemWarning {
+  margin-top: 13px;
+  background: #fff5dc;
+  padding: 10px;
+  border-radius: 8px;
+  color: #745719;
+}
+
+.card details {
+  margin-top: 16px;
+  border-top: 1px solid #e4e8ec;
+  padding-top: 13px;
+}
+
+.card summary {
+  cursor: pointer;
+  color: #246b9e;
+  font-weight: 700;
+}
+
+.card pre {
+  white-space: pre-wrap;
+  font-family: inherit;
+  line-height: 1.6;
+  background: #f8fafc;
+  padding: 12px;
+  border-radius: 8px;
+  max-height: 320px;
+  overflow: auto;
+}
+
+@media (max-width: 700px) {
+  .uploadBox {
+    grid-template-columns: 1fr;
+  }
+
+  .row {
+    grid-template-columns: 1fr;
+  }
+
+  .topActions {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+}
