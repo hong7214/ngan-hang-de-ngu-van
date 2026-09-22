@@ -23,25 +23,12 @@ type DeNhap = {
 };
 
 export default function ImportPage() {
- const [lopMacDinh, setLopMacDinh] = useState("9");
+  const [lopMacDinh, setLopMacDinh] = useState("9");
 
-const [danhSach, setDanhSach] =
-  useState<DeNhap[]>([]);
+  const [danhSach, setDanhSach] =
+    useState<DeNhap[]>([]);
 
-const [dangDoc, setDangDoc] =
-  useState(false);
-
-const [dangNhap, setDangNhap] =
-  useState(false);
-
-const [thongBao, setThongBao] =
-  useState("");
-
-const [loiFile, setLoiFile] =
-  useState<string[]>([]);
-
-const [congKhaiNgay, setCongKhaiNgay] =
-  useState(false);
+  const [dangDoc, setDangDoc] =
     useState(false);
 
   const [dangNhap, setDangNhap] =
@@ -324,12 +311,7 @@ const [congKhaiNgay, setCongKhaiNgay] =
     const loi: string[] = [];
 
     for (const file of files) {
-  try {
-
-    // Bỏ qua file tạm do Microsoft Word tạo ra
-    if (file.name.startsWith("~$")) {
-      continue;
-    }
+      try {
         const tenThuong =
           file.name.toLowerCase();
 
