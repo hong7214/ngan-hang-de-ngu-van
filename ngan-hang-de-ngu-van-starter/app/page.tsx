@@ -1128,15 +1128,34 @@ export default function Home() {
           CHÂN TRANG
       ====================================== */}
 
-      <footer>
-        <strong>
-          Ngân hàng đề tự luận Ngữ văn THCS
-        </strong>
+     <footer className="app-footer">
 
-        <span>
-          Học tập mỗi ngày • Tiến bộ mỗi ngày
-        </span>
-      </footer>
+  <div className="footer-main">
+    <strong>
+      Ngân hàng đề tự luận Ngữ văn THCS
+    </strong>
+
+    <span>
+      Học tập mỗi ngày • Tiến bộ mỗi ngày
+    </span>
+  </div>
+
+  <div className="footer-credit">
+    <p>
+      App được tạo bởi
+      <strong> GV: Trần Thị Nguyệt Hồng</strong>
+    </p>
+
+    <p>
+      Giáo viên Ngữ văn • Trường THCS Long Cang, Tây Ninh
+    </p>
+
+    <p>
+      Zalo: <strong>0933122900</strong>
+    </p>
+  </div>
+
+</footer>
     </main>
   );
 }
