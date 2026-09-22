@@ -54,40 +54,53 @@ function khongDau(text: string) {
 ===================================================== */
 
 function laBatDauPhanI(line: string) {
-  const s = khongDau(line);
+  const s = khongDau(line)
+    .replace(/[–—]/g, "-")
+    .replace(/\s+/g, " ")
+    .trim();
 
   return (
-    /^I[\.\):\-]\s*(PHAN\s*)?(DOC|PHAN)/.test(s) ||
-    /^PHAN\s+I[\.\):\-]?\s*(DOC|$)/.test(s)
+    // I. PHẦN ĐỌC HIỂU
+    /^I\s*[\.\):\-]?\s*PHAN\s+DOC\b/.test(s) ||
+
+    // I. ĐỌC HIỂU
+    /^I\s*[\.\):\-]?\s*DOC\b/.test(s) ||
+
+    // PHẦN I. ĐỌC HIỂU
+    /^PHAN\s+I\s*[\.\):\-]?\s*(PHAN\s+)?DOC\b/.test(s) ||
+
+    // PHẦN ĐỌC HIỂU (không ghi số I)
+    /^PHAN\s+DOC\s*[- ]*HIEU\b/.test(s)
   );
 }
 
-/* =====================================================
-   NHẬN DIỆN ĐIỂM KẾT THÚC ĐỀ
-===================================================== */
+function laDongBatDauNguLieu(line: string) {
+  const s = khongDau(line);
+
+  return (
+    /^DOC\s+(VAN BAN|BAI THO|DOAN THO|DOAN TRICH|NGU LIEU)/.test(s) ||
+    /^DOC\s+HIEU\b/.test(s)
+  );
+}
 
 function laMocKetThuc(line: string) {
-  const s = khongDau(line);
+  const s = khongDau(line)
+    .replace(/[–—]/g, "-")
+    .trim();
 
   return (
-    /^(?:-+\s*)?HUONG DAN CHAM/.test(s) ||
-    /^(?:-+\s*)?DAP AN/.test(s) ||
-    /^(?:-+\s*)?MA TRAN/.test(s) ||
-    /^(?:-+\s*)?BANG DAC TA/.test(s) ||
-    /^(?:-+\s*)?HET\b/.test(s) ||
+    /^-*\s*HUONG DAN CHAM/.test(s) ||
+    /^-*\s*DAP AN/.test(s) ||
+    /^-*\s*GOI Y DAP AN/.test(s) ||
+    /^-*\s*DAP AN THAM KHAO/.test(s) ||
+    /^-*\s*MA TRAN/.test(s) ||
+    /^-*\s*BANG DAC TA/.test(s) ||
+    /^-*\s*DAC TA DE/.test(s) ||
+    /^-*\s*HET\b/.test(s) ||
     /^PHAN\s+III\b/.test(s) ||
-    /^III[\.\):\-]/.test(s)
+    /^III\s*[\.\):\-]/.test(s)
   );
 }
-
-/* =====================================================
-   LẤY ĐÚNG PHẦN ĐỀ DÀNH CHO HỌC SINH
-
-   - Ghép ngữ liệu + câu hỏi
-   - Bỏ tất cả nội dung trước PHẦN I
-   - Giữ PHẦN I và PHẦN II
-   - Dừng trước đáp án / HDC / ma trận / hết
-===================================================== */
 
 function layNoiDungHocSinh(item: DeNguVan) {
   const raw = `${item.ngu_lieu ?? ""}
@@ -100,40 +113,52 @@ ${item.cau_hoi ?? ""}`
 
   const lines = raw.split("\n");
 
-  /* Tìm vị trí bắt đầu PHẦN I */
-
-  const startIndex = lines.findIndex((line) =>
+  // Ưu tiên tìm đúng PHẦN I
+  let startIndex = lines.findIndex((line) =>
     laBatDauPhanI(line)
   );
 
-  /*
-    Nếu không tìm thấy PHẦN I:
-    không hiển thị nội dung để tránh vô tình
-    đưa tiêu đề / đáp án cho học sinh.
-  */
+  let canThemTieuDePhanI = false;
 
+  // Nếu tài liệu không ghi I. nhưng có "Đọc văn bản/bài thơ..."
+  // thì lấy từ dòng đó và tự thêm tiêu đề I.
   if (startIndex === -1) {
-    return "";
+    startIndex = lines.findIndex((line) =>
+      laDongBatDauNguLieu(line)
+    );
+
+    if (startIndex !== -1) {
+      canThemTieuDePhanI = true;
+    }
+  }
+
+  /*
+    Trường hợp dữ liệu cũ đã được tách nhưng mất tiêu đề I:
+    vẫn hiển thị nội dung thay vì báo lỗi.
+  */
+  if (startIndex === -1) {
+    startIndex = 0;
+    canThemTieuDePhanI = true;
   }
 
   const ketQua: string[] = [];
 
+  if (canThemTieuDePhanI) {
+    ketQua.push("I. PHẦN ĐỌC HIỂU");
+    ketQua.push("");
+  }
+
   for (let i = startIndex; i < lines.length; i++) {
     const line = lines[i];
 
-    /* Dừng trước đáp án, ma trận... */
-
+    // Gặp đáp án, HDC, ma trận, HẾT... thì dừng
     if (i > startIndex && laMocKetThuc(line)) {
       break;
     }
 
-    /*
-      Loại thêm các dòng "MÃ ĐỀ"
-      nếu chúng bị chen giữa nội dung tài liệu.
-    */
-
     const dong = khongDau(line);
 
+    // Loại mã đề nếu bị chen trong nội dung
     if (
       /^MA DE\s*[:\-]/.test(dong) ||
       /^MA DE$/.test(dong)
@@ -149,7 +174,6 @@ ${item.cau_hoi ?? ""}`
     .replace(/\n{3,}/g, "\n\n")
     .trim();
 }
-
 export default function Home() {
   const [de, setDe] = useState<DeNguVan[]>([]);
   const [loading, setLoading] = useState(true);
