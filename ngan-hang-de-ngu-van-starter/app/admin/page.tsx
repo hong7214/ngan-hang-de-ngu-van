@@ -85,7 +85,8 @@ export default function AdminPage() {
   const [thongBao, setThongBao] = useState("");
   const [dangLuu, setDangLuu] = useState(false);
   const [tuKhoa, setTuKhoa] = useState("");
-
+const [deDaChon, setDeDaChon] =
+  useState<number[]>([]);
   useEffect(() => {
     kiemTraDangNhap();
   }, []);
@@ -407,7 +408,104 @@ export default function AdminPage() {
 
     await taiDanhSach();
   }
+function doiChonDe(id: number) {
+  setDeDaChon((cu) =>
+    cu.includes(id)
+      ? cu.filter((x) => x !== id)
+      : [...cu, id]
+  );
+}
 
+function chonTatCa() {
+  const ids = danhSachLoc.map(
+    (item) => item.id
+  );
+
+  const daChonHet =
+    ids.length > 0 &&
+    ids.every((id) =>
+      deDaChon.includes(id)
+    );
+
+  if (daChonHet) {
+    setDeDaChon([]);
+  } else {
+    setDeDaChon(ids);
+  }
+}
+
+async function doiTrangThaiHangLoat(
+  congKhai: boolean
+) {
+  if (!deDaChon.length) {
+    setThongBao(
+      "Cô chưa chọn đề nào."
+    );
+    return;
+  }
+
+  const { error } = await supabase
+    .from("de_ngu_van")
+    .update({
+      cong_khai: congKhai,
+      updated_at:
+        new Date().toISOString(),
+    })
+    .in("id", deDaChon);
+
+  if (error) {
+    setThongBao(
+      "Không cập nhật được: " +
+        error.message
+    );
+    return;
+  }
+
+  setThongBao(
+    congKhai
+      ? `✓ Đã công khai ${deDaChon.length} đề.`
+      : `✓ Đã ẩn ${deDaChon.length} đề.`
+  );
+
+  setDeDaChon([]);
+  await taiDanhSach();
+}
+
+async function xoaHangLoat() {
+  if (!deDaChon.length) {
+    setThongBao(
+      "Cô chưa chọn đề nào."
+    );
+    return;
+  }
+
+  const dongY =
+    window.confirm(
+      `Cô có chắc muốn xóa ${deDaChon.length} đề đã chọn?\n\nKhông thể hoàn tác.`
+    );
+
+  if (!dongY) return;
+
+  const { error } = await supabase
+    .from("de_ngu_van")
+    .delete()
+    .in("id", deDaChon);
+
+  if (error) {
+    setThongBao(
+      "Không xóa được: " +
+        error.message
+    );
+    return;
+  }
+
+  setThongBao(
+    `✓ Đã xóa ${deDaChon.length} đề.`
+  );
+
+  setDeDaChon([]);
+  await taiDanhSach();
+}
   const danhSachLoc = danhSach.filter(
     (item) => {
       const q = tuKhoa
@@ -959,14 +1057,57 @@ export default function AdminPage() {
             />
 
           </div>
+<div className={styles.bulkBar}>
 
+  <button
+    onClick={chonTatCa}
+    className={styles.selectAll}
+  >
+    ☑ Chọn tất cả
+  </button>
+
+  <span>
+    Đã chọn:
+    <strong>
+      {" "}
+      {deDaChon.length}
+    </strong>
+  </span>
+
+  <button
+    onClick={() =>
+      doiTrangThaiHangLoat(true)
+    }
+    className={styles.bulkPublic}
+  >
+    👁 Công khai
+  </button>
+
+  <button
+    onClick={() =>
+      doiTrangThaiHangLoat(false)
+    }
+    className={styles.bulkHide}
+  >
+    🙈 Ẩn
+  </button>
+
+  <button
+    onClick={xoaHangLoat}
+    className={styles.bulkDelete}
+  >
+    🗑 Xóa
+  </button>
+
+</div>
           <div className={styles.tableWrap}>
 
             <table>
 
               <thead>
-                <tr>
-                  <th>Đề</th>
+              <tr>
+  <th>Chọn</th>
+  <th>Đề</th>
                   <th>Lớp</th>
                   <th>Thể loại</th>
                   <th>Trạng thái</th>
@@ -980,7 +1121,17 @@ export default function AdminPage() {
                   (item) => (
 
                     <tr key={item.id}>
-
+<td>
+  <input
+    type="checkbox"
+    checked={deDaChon.includes(
+      item.id
+    )}
+    onChange={() =>
+      doiChonDe(item.id)
+    }
+  />
+</td>
                       <td>
                         <strong>
                           {item.tieu_de}
