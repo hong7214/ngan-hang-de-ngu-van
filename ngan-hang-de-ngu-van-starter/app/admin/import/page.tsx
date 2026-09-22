@@ -23,12 +23,25 @@ type DeNhap = {
 };
 
 export default function ImportPage() {
-  const [lopMacDinh, setLopMacDinh] = useState("9");
+ const [lopMacDinh, setLopMacDinh] = useState("9");
 
-  const [danhSach, setDanhSach] 
-    useState<DeNhap[]>([]);
+const [danhSach, setDanhSach] =
+  useState<DeNhap[]>([]);
 
-  const [dangDoc, setDangDoc] =
+const [dangDoc, setDangDoc] =
+  useState(false);
+
+const [dangNhap, setDangNhap] =
+  useState(false);
+
+const [thongBao, setThongBao] =
+  useState("");
+
+const [loiFile, setLoiFile] =
+  useState<string[]>([]);
+
+const [congKhaiNgay, setCongKhaiNgay] =
+  useState(false);
     useState(false);
 
   const [dangNhap, setDangNhap] =
