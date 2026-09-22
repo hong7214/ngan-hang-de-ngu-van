@@ -409,3 +409,39 @@
   background: #fde8e8;
   color: #b32222;
 }
+.assignActions {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  min-width: 105px;
+}
+
+.assigned,
+.notAssigned,
+.copyLink {
+  border: 0;
+  border-radius: 8px;
+  padding: 8px 10px;
+  cursor: pointer;
+  font-weight: 700;
+  font-size: 12px;
+}
+
+.assigned {
+  background: #e2f5e9;
+  color: #17713b;
+}
+
+.notAssigned {
+  background: #f1f3f5;
+  color: #65717d;
+}
+
+.copyLink {
+  background: #e5f1fb;
+  color: #176798;
+}
+
+.copyLink:hover {
+  background: #d6eaf8;
+}
