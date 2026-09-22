@@ -1789,3 +1789,86 @@ footer span {
       17px !important;
   }
 }
+/* ==========================================
+   FOOTER - THÔNG TIN TÁC GIẢ APP
+========================================== */
+
+.app-footer {
+  padding: 34px 20px 28px !important;
+
+  background:
+    linear-gradient(
+      135deg,
+      #9d174d 0%,
+      #db2777 50%,
+      #9333ea 100%
+    ) !important;
+
+  color: #ffffff !important;
+
+  text-align: center;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  gap: 18px;
+}
+
+.footer-main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  gap: 6px;
+}
+
+.footer-main strong {
+  font-size: 18px;
+  font-weight: 800;
+  color: #ffffff !important;
+}
+
+.footer-main span {
+  font-size: 14px;
+  color: rgba(255,255,255,.82) !important;
+}
+
+.footer-credit {
+  width: min(760px, 100%);
+
+  padding-top: 16px;
+
+  border-top:
+    1px solid
+    rgba(255,255,255,.25);
+}
+
+.footer-credit p {
+  margin: 5px 0;
+
+  font-size: 14px;
+  line-height: 1.55;
+
+  color:
+    rgba(255,255,255,.92) !important;
+}
+
+.footer-credit strong {
+  color: #ffffff !important;
+  font-weight: 800;
+}
+
+@media (max-width: 600px) {
+  .app-footer {
+    padding: 28px 16px 24px !important;
+  }
+
+  .footer-main strong {
+    font-size: 16px;
+  }
+
+  .footer-credit p {
+    font-size: 13px;
+  }
+}
