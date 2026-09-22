@@ -371,3 +371,41 @@
     max-width: none;
   }
 }
+.bulkBar {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 15px 0;
+  padding: 13px;
+  background: #f5f8fb;
+  border-radius: 11px;
+}
+
+.bulkBar button {
+  border: 0;
+  border-radius: 8px;
+  padding: 9px 13px;
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.selectAll {
+  background: #e8f2fa;
+  color: #1f628f;
+}
+
+.bulkPublic {
+  background: #e2f5e9;
+  color: #18723c;
+}
+
+.bulkHide {
+  background: #eef0f2;
+  color: #4d5863;
+}
+
+.bulkDelete {
+  background: #fde8e8;
+  color: #b32222;
+}
