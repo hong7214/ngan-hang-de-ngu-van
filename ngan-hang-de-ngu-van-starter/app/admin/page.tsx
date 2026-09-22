@@ -9,7 +9,7 @@ type DeNguVan = {
   tieu_de: string;
   lop: string | null;
   nhom: string | null;
-  the_loai: string | null;
+  the_loai: string | null;Ftype 
   dang_bai: string | null;
   chu_de: string | null;
   ngu_lieu: string | null;
@@ -611,6 +611,82 @@ async function saoChepLinkGiaoBai(
   }
 }
   await taiDanhSach();
+}
+async function doiDaGiao(item: DeNguVan) {
+  const trangThaiMoi = !item.da_giao;
+
+  const { error } = await supabase
+    .from("de_ngu_van")
+    .update({
+      da_giao: trangThaiMoi,
+      lan_giao_cuoi: trangThaiMoi
+        ? new Date().toISOString()
+        : null,
+      updated_at: new Date().toISOString(),
+    })
+    .eq("id", item.id);
+
+  if (error) {
+    setThongBao(
+      "Không đổi được trạng thái giao bài: " +
+        error.message
+    );
+    return;
+  }
+
+  setThongBao(
+    trangThaiMoi
+      ? `✓ Đã đánh dấu "${item.tieu_de}" là đã giao.`
+      : `Đã chuyển "${item.tieu_de}" về chưa giao.`
+  );
+
+  await taiDanhSach();
+}
+async function saoChepLinkGiaoBai(
+  item: DeNguVan
+) {
+  if (!item.cong_khai) {
+    setThongBao(
+      "Đề này đang ẩn. Cô cần công khai đề trước khi giao cho học sinh."
+    );
+    return;
+  }
+
+  const link =
+    `https://hong7214.github.io/ngan-hang-de-ngu-van/?de=${item.id}`;
+
+  try {
+    await navigator.clipboard.writeText(link);
+
+    const { error } = await supabase
+      .from("de_ngu_van")
+      .update({
+        da_giao: true,
+        lan_giao_cuoi:
+          new Date().toISOString(),
+        updated_at:
+          new Date().toISOString(),
+      })
+      .eq("id", item.id);
+
+    if (error) {
+      setThongBao(
+        "Đã sao chép link nhưng chưa cập nhật được trạng thái: " +
+          error.message
+      );
+      return;
+    }
+
+    setThongBao(
+      `✓ Đã sao chép link giao bài "${item.tieu_de}".`
+    );
+
+    await taiDanhSach();
+  } catch {
+    setThongBao(
+      "Không sao chép được link. Cô thử lại."
+    );
+  }
 }
   const danhSachLoc = danhSach.filter(
     (item) => {
@@ -1261,6 +1337,50 @@ async function saoChepLinkGiaoBai(
                       </td>
 
                       <td>
+                        <td>
+  <div className={styles.assignActions}>
+
+    <button
+      onClick={() =>
+        doiDaGiao(item)
+      }
+      className={
+        item.da_giao
+          ? styles.assigned
+          : styles.notAssigned
+      }
+    >
+      {item.da_giao
+        ? "✓ Đã giao"
+        : "Chưa giao"}
+    </button>
+
+    <button
+      onClick={() =>
+        saoChepLinkGiaoBai(item)
+      }
+      className={styles.copyLink}
+    >
+      🔗 Lấy link
+    </button>
+
+    {item.da_giao &&
+      item.lan_giao_cuoi && (
+        <small
+          className={
+            styles.assignedDate
+          }
+        >
+          {new Date(
+            item.lan_giao_cuoi
+          ).toLocaleDateString(
+            "vi-VN"
+          )}
+        </small>
+      )}
+
+  </div>
+</td>
                         <button
                           onClick={() =>
                             doiCongKhai(
