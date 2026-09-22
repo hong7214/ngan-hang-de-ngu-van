@@ -246,10 +246,15 @@ export default function Home() {
                 NGỮ VĂN THCS
               </div>
 
-              <h1>
-                Ngân hàng đề tự luận
-                <span> Ngữ văn</span>
-              </h1>
+              <h1 className="app-title">
+  <span className="app-title-main">
+    Ngân hàng đề tự luận
+  </span>
+
+  <span className="app-title-vietnamese">
+    Ngữ văn
+  </span>
+</h1>
 
               <p className="hero-description">
                 Học liệu được sắp xếp theo lớp,
