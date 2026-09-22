@@ -37,11 +37,7 @@ const THE_LOAI_THO = [
   CÔ CHỈ CẦN THAY 3 DÒNG NÀY
   bằng thông tin thật của giáo viên.
 */
-const THONG_TIN_GV = {
-  hoTen: "Cô Nguyễn Thị A",
-  donVi: "Giáo viên Ngữ văn - Trường THCS ...",
-  loiNhan: "Chúc các em học tốt, tự tin và tiến bộ mỗi ngày.",
-};
+
 
 function khongDau(text: string) {
   return text
@@ -159,12 +155,24 @@ ${item.cau_hoi ?? ""}`
     .replace(/\n{3,}/g, "\n\n")
     .trim();
 }
-
+type SiteSettings = {
+  teacher_name: string;
+  teacher_school: string;
+  teacher_message: string;
+  teacher_photo_url: string | null;
+};
 export default function Home() {
   const [de, setDe] = useState<DeNguVan[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-
+const [thongTinGV, setThongTinGV] =
+  useState<SiteSettings>({
+    teacher_name: "Giáo viên Ngữ văn",
+    teacher_school: "THCS",
+    teacher_message:
+      "Chúc các em học tốt và tiến bộ mỗi ngày.",
+    teacher_photo_url: null,
+  });
   const [tuKhoa, setTuKhoa] = useState("");
   const [lop, setLop] = useState("Tất cả");
   const [nhom, setNhom] = useState("Tất cả");
@@ -195,7 +203,47 @@ export default function Home() {
 
     taiDe();
   }, []);
+useEffect(() => {
+  async function taiThongTinGV() {
+    const { data, error } = await supabase
+      .from("site_settings")
+      .select(
+        "teacher_name, teacher_school, teacher_message, teacher_photo_url"
+      )
+      .eq("id", 1)
+      .single();
 
+    if (error) {
+      console.error(
+        "Không tải được thông tin giáo viên:",
+        error.message
+      );
+      return;
+    }
+
+    if (data) {
+      setThongTinGV({
+        teacher_name:
+          data.teacher_name ??
+          "Giáo viên Ngữ văn",
+
+        teacher_school:
+          data.teacher_school ??
+          "THCS",
+
+        teacher_message:
+          data.teacher_message ??
+          "Chúc các em học tốt và tiến bộ mỗi ngày.",
+
+        teacher_photo_url:
+          data.teacher_photo_url ??
+          null,
+      });
+    }
+  }
+
+  taiThongTinGV();
+}, []);
   const danhSach = useMemo(() => {
     const q = tuKhoa.trim().toLowerCase();
 
@@ -266,28 +314,40 @@ export default function Home() {
           </div>
 
           <div className="teacher-box">
-            <div className="teacher-avatar">
-              GV
-            </div>
 
-            <div>
-              <small>
-                GIÁO VIÊN PHỤ TRÁCH
-              </small>
+  {thongTinGV.teacher_photo_url ? (
+    <img
+      className="teacher-photo"
+      src={thongTinGV.teacher_photo_url}
+      alt="Ảnh giáo viên phụ trách"
+    />
+  ) : (
+    <div className="teacher-avatar">
+      GV
+    </div>
+  )}
 
-              <strong>
-                {THONG_TIN_GV.hoTen}
-              </strong>
+  <div className="teacher-info">
 
-              <span>
-                {THONG_TIN_GV.donVi}
-              </span>
+    <small>
+      GIÁO VIÊN PHỤ TRÁCH
+    </small>
 
-              <p>
-                {THONG_TIN_GV.loiNhan}
-              </p>
-            </div>
-          </div>
+    <strong>
+      {thongTinGV.teacher_name}
+    </strong>
+
+    <span>
+      {thongTinGV.teacher_school}
+    </span>
+
+    <p>
+      {thongTinGV.teacher_message}
+    </p>
+
+  </div>
+
+</div>
 
         </div>
       </header>
