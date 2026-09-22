@@ -33,10 +33,15 @@ const THE_LOAI_THO = [
   "Thơ Đường luật",
 ];
 
-/* =====================================================
-   CHUYỂN CHỮ CÓ DẤU → KHÔNG DẤU
-   Dùng để nhận diện các tiêu đề I, II, ĐÁP ÁN...
-===================================================== */
+/*
+  CÔ CHỈ CẦN THAY 3 DÒNG NÀY
+  bằng thông tin thật của giáo viên.
+*/
+const THONG_TIN_GV = {
+  hoTen: "Tên giáo viên",
+  donVi: "Giáo viên Ngữ văn THCS",
+  loiNhan: "Kho học liệu dành cho học sinh ôn luyện và rèn kỹ năng Ngữ văn.",
+};
 
 function khongDau(text: string) {
   return text
@@ -49,10 +54,6 @@ function khongDau(text: string) {
     .replace(/\s+/g, " ");
 }
 
-/* =====================================================
-   NHẬN DIỆN DÒNG BẮT ĐẦU PHẦN I
-===================================================== */
-
 function laBatDauPhanI(line: string) {
   const s = khongDau(line)
     .replace(/[–—]/g, "-")
@@ -60,16 +61,9 @@ function laBatDauPhanI(line: string) {
     .trim();
 
   return (
-    // I. PHẦN ĐỌC HIỂU
     /^I\s*[\.\):\-]?\s*PHAN\s+DOC\b/.test(s) ||
-
-    // I. ĐỌC HIỂU
     /^I\s*[\.\):\-]?\s*DOC\b/.test(s) ||
-
-    // PHẦN I. ĐỌC HIỂU
     /^PHAN\s+I\s*[\.\):\-]?\s*(PHAN\s+)?DOC\b/.test(s) ||
-
-    // PHẦN ĐỌC HIỂU (không ghi số I)
     /^PHAN\s+DOC\s*[- ]*HIEU\b/.test(s)
   );
 }
@@ -113,15 +107,12 @@ ${item.cau_hoi ?? ""}`
 
   const lines = raw.split("\n");
 
-  // Ưu tiên tìm đúng PHẦN I
   let startIndex = lines.findIndex((line) =>
     laBatDauPhanI(line)
   );
 
   let canThemTieuDePhanI = false;
 
-  // Nếu tài liệu không ghi I. nhưng có "Đọc văn bản/bài thơ..."
-  // thì lấy từ dòng đó và tự thêm tiêu đề I.
   if (startIndex === -1) {
     startIndex = lines.findIndex((line) =>
       laDongBatDauNguLieu(line)
@@ -132,10 +123,6 @@ ${item.cau_hoi ?? ""}`
     }
   }
 
-  /*
-    Trường hợp dữ liệu cũ đã được tách nhưng mất tiêu đề I:
-    vẫn hiển thị nội dung thay vì báo lỗi.
-  */
   if (startIndex === -1) {
     startIndex = 0;
     canThemTieuDePhanI = true;
@@ -151,14 +138,12 @@ ${item.cau_hoi ?? ""}`
   for (let i = startIndex; i < lines.length; i++) {
     const line = lines[i];
 
-    // Gặp đáp án, HDC, ma trận, HẾT... thì dừng
     if (i > startIndex && laMocKetThuc(line)) {
       break;
     }
 
     const dong = khongDau(line);
 
-    // Loại mã đề nếu bị chen trong nội dung
     if (
       /^MA DE\s*[:\-]/.test(dong) ||
       /^MA DE$/.test(dong)
@@ -174,6 +159,7 @@ ${item.cau_hoi ?? ""}`
     .replace(/\n{3,}/g, "\n\n")
     .trim();
 }
+
 export default function Home() {
   const [de, setDe] = useState<DeNguVan[]>([]);
   const [loading, setLoading] = useState(true);
@@ -183,7 +169,6 @@ export default function Home() {
   const [lop, setLop] = useState("Tất cả");
   const [nhom, setNhom] = useState("Tất cả");
   const [theLoai, setTheLoai] = useState("Tất cả");
-
   const [dangMo, setDangMo] =
     useState<number | null>(null);
 
@@ -212,9 +197,7 @@ export default function Home() {
   }, []);
 
   const danhSach = useMemo(() => {
-    const q = tuKhoa
-      .trim()
-      .toLowerCase();
+    const q = tuKhoa.trim().toLowerCase();
 
     return de.filter((item) => {
       const hop =
@@ -234,127 +217,184 @@ export default function Home() {
           item.the_loai === theLoai)
       );
     });
-  }, [
-    de,
-    tuKhoa,
-    lop,
-    nhom,
-    theLoai,
-  ]);
+  }, [de, tuKhoa, lop, nhom, theLoai]);
 
   return (
     <main>
+
       <header className="hero">
+        <div className="hero-decoration hero-decoration-one" />
+        <div className="hero-decoration hero-decoration-two" />
+
         <div className="hero-inner">
-          <div>
-            <div className="badge">
-              NGỮ VĂN THCS
+
+          <div className="brand-wrap">
+
+            <div className="brand-logo">
+              <svg
+                viewBox="0 0 64 64"
+                aria-hidden="true"
+              >
+                <path d="M10 13c9-3 16-1 22 5v36c-6-6-13-8-22-5V13Z" />
+                <path d="M54 13c-9-3-16-1-22 5v36c6-6 13-8 22-5V13Z" />
+                <path d="M32 18v36" />
+              </svg>
             </div>
 
-            <h1>
-              Ngân hàng đề tự luận Ngữ văn
-            </h1>
+            <div>
+              <div className="badge">
+                NGỮ VĂN THCS
+              </div>
 
-            <p>
-              Tìm kiếm, chọn lớp, thể loại
-              và mở đề ngay trên một đường
-              link duy nhất.
-            </p>
+              <h1>
+                Ngân hàng đề tự luận
+                <span> Ngữ văn</span>
+              </h1>
+
+              <p className="hero-description">
+                Học liệu được sắp xếp theo lớp,
+                dạng bài và thể loại để học sinh
+                dễ dàng luyện tập.
+              </p>
+            </div>
+
           </div>
 
-          <div className="hero-number">
-            <strong>
-              {de.length}
-            </strong>
+          <div className="teacher-box">
+            <div className="teacher-avatar">
+              GV
+            </div>
 
-            <span>
-              đề đang công khai
-            </span>
+            <div>
+              <small>
+                GIÁO VIÊN PHỤ TRÁCH
+              </small>
+
+              <strong>
+                {THONG_TIN_GV.hoTen}
+              </strong>
+
+              <span>
+                {THONG_TIN_GV.donVi}
+              </span>
+
+              <p>
+                {THONG_TIN_GV.loiNhan}
+              </p>
+            </div>
           </div>
+
         </div>
       </header>
 
       <section className="container">
 
-        <div className="filters">
+        <div className="stats-row">
 
-          <input
-            value={tuKhoa}
-            onChange={(e) =>
-              setTuKhoa(e.target.value)
-            }
-            placeholder="🔎 Tìm theo tên đề, chủ đề, ngữ liệu..."
-          />
+          <div className="stat-card">
+            <span>📚</span>
+            <div>
+              <strong>{de.length}</strong>
+              <small>Đề đang công khai</small>
+            </div>
+          </div>
 
-          <select
-            value={lop}
-            onChange={(e) =>
-              setLop(e.target.value)
-            }
-          >
-            <option>Tất cả</option>
-            <option>6</option>
-            <option>7</option>
-            <option>8</option>
-            <option>9</option>
-          </select>
+          <div className="stat-card">
+            <span>🎓</span>
+            <div>
+              <strong>6–9</strong>
+              <small>Khối THCS</small>
+            </div>
+          </div>
 
-          <select
-            value={nhom}
-            onChange={(e) =>
-              setNhom(e.target.value)
-            }
-          >
-            <option>Tất cả</option>
-
-            <option>
-              Thơ
-            </option>
-
-            <option>
-              Truyện
-            </option>
-
-            <option>
-              Nghị luận xã hội
-            </option>
-
-            <option>
-              Nghị luận văn học
-            </option>
-
-            <option>
-              Viết đoạn văn
-            </option>
-
-            <option>
-              Đề tổng hợp
-            </option>
-          </select>
-
-          <select
-            value={theLoai}
-            onChange={(e) =>
-              setTheLoai(e.target.value)
-            }
-          >
-            <option>Tất cả</option>
-
-            {THE_LOAI_THO.map((x) => (
-              <option key={x}>
-                {x}
-              </option>
-            ))}
-          </select>
+          <div className="stat-card">
+            <span>✍️</span>
+            <div>
+              <strong>Nhiều dạng</strong>
+              <small>Đọc hiểu & viết</small>
+            </div>
+          </div>
 
         </div>
 
+        <div className="filter-panel">
+
+          <div className="filter-title">
+            <div>
+              <span className="filter-icon">🔎</span>
+
+              <div>
+                <strong>Tìm đề luyện tập</strong>
+                <small>
+                  Chọn nội dung phù hợp với em
+                </small>
+              </div>
+            </div>
+          </div>
+
+          <div className="filters">
+
+            <input
+              value={tuKhoa}
+              onChange={(e) =>
+                setTuKhoa(e.target.value)
+              }
+              placeholder="Tìm tên đề, chủ đề, ngữ liệu..."
+            />
+
+            <select
+              value={lop}
+              onChange={(e) =>
+                setLop(e.target.value)
+              }
+            >
+              <option>Tất cả</option>
+              <option>6</option>
+              <option>7</option>
+              <option>8</option>
+              <option>9</option>
+            </select>
+
+            <select
+              value={nhom}
+              onChange={(e) =>
+                setNhom(e.target.value)
+              }
+            >
+              <option>Tất cả</option>
+              <option>Thơ</option>
+              <option>Truyện</option>
+              <option>Nghị luận xã hội</option>
+              <option>Nghị luận văn học</option>
+              <option>Viết đoạn văn</option>
+              <option>Đề tổng hợp</option>
+            </select>
+
+            <select
+              value={theLoai}
+              onChange={(e) =>
+                setTheLoai(e.target.value)
+              }
+            >
+              <option>Tất cả</option>
+
+              {THE_LOAI_THO.map((x) => (
+                <option key={x}>
+                  {x}
+                </option>
+              ))}
+            </select>
+
+          </div>
+        </div>
+
         <div className="summary">
+          <span>✨</span>
           Tìm thấy{" "}
           <strong>
             {danhSach.length}
           </strong>{" "}
-          đề
+          đề phù hợp
         </div>
 
         {loading && (
@@ -365,8 +405,7 @@ export default function Home() {
 
         {error && (
           <div className="notice error">
-            Không tải được dữ liệu:{" "}
-            {error}
+            Không tải được dữ liệu: {error}
           </div>
         )}
 
@@ -382,24 +421,32 @@ export default function Home() {
         <div className="grid">
 
           {danhSach.map((item) => {
-
             const noiDung =
               layNoiDungHocSinh(item);
 
+            const mau =
+              item.id % 8;
+
             return (
               <article
-                className="card"
+                className={`card card-color-${mau}`}
                 key={item.id}
               >
+
+                <div className="card-accent" />
+
+                <div className="card-number">
+                  ĐỀ {String(item.id).padStart(2, "0")}
+                </div>
 
                 <div className="card-top">
 
                   <span className="pill">
-                    Lớp{" "}
-                    {item.lop || "—"}
+                    🎓 Lớp {item.lop || "—"}
                   </span>
 
                   <span className="pill light">
+                    📖{" "}
                     {item.the_loai ||
                       item.nhom ||
                       "Ngữ văn"}
@@ -412,22 +459,26 @@ export default function Home() {
                 </h2>
 
                 <p className="meta">
-                  {item.dang_bai ||
-                    "Tự luận"}
+                  <span>
+                    ✍️ {item.dang_bai || "Tự luận"}
+                  </span>
 
-                  {item.thoi_gian
-                    ? ` • ${item.thoi_gian} phút`
-                    : ""}
+                  {item.thoi_gian && (
+                    <span>
+                      ⏱ {item.thoi_gian} phút
+                    </span>
+                  )}
 
-                  {item.so_diem
-                    ? ` • ${item.so_diem} điểm`
-                    : ""}
+                  {item.so_diem && (
+                    <span>
+                      ⭐ {item.so_diem} điểm
+                    </span>
+                  )}
                 </p>
 
                 {item.chu_de && (
                   <p className="topic">
-                    Chủ đề:{" "}
-                    {item.chu_de}
+                    Chủ đề: {item.chu_de}
                   </p>
                 )}
 
@@ -442,8 +493,8 @@ export default function Home() {
                   }
                 >
                   {dangMo === item.id
-                    ? "Đóng đề"
-                    : "Xem đề"}
+                    ? "Thu gọn đề ▲"
+                    : "Mở đề luyện tập →"}
                 </button>
 
                 {dangMo === item.id && (
@@ -451,21 +502,37 @@ export default function Home() {
 
                     {noiDung ? (
                       <>
-                        <h3>
-                          Đề bài
-                        </h3>
+                        <div className="detail-heading">
+                          <div>
+                            <span>
+                              ĐỀ LUYỆN TẬP
+                            </span>
 
-                        <p className="pre">
+                            <h3>
+                              {item.tieu_de}
+                            </h3>
+                          </div>
+
+                          <div className="detail-score">
+                            {item.so_diem || 10}
+                            <small>điểm</small>
+                          </div>
+                        </div>
+
+                        <div className="exam-content">
                           {noiDung}
-                        </p>
+                        </div>
+
+                        <div className="exam-note">
+                          🌱 Chúc em làm bài
+                          bình tĩnh, tự tin và
+                          đạt kết quả tốt!
+                        </div>
                       </>
                     ) : (
                       <div className="notice">
-                        Đề này chưa được
-                        chuẩn hóa theo cấu
-                        trúc Phần I – Phần II.
-                        Giáo viên đang kiểm
-                        tra lại.
+                        Đề đang được giáo viên
+                        kiểm tra lại nội dung.
                       </div>
                     )}
 
@@ -481,8 +548,13 @@ export default function Home() {
       </section>
 
       <footer>
-        Ngân hàng đề tự luận
-        Ngữ văn THCS
+        <strong>
+          Ngân hàng đề tự luận Ngữ văn THCS
+        </strong>
+
+        <span>
+          Học tập mỗi ngày • Tiến bộ mỗi ngày
+        </span>
       </footer>
 
     </main>
