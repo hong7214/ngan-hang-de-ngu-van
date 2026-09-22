@@ -1,6 +1,8 @@
 "use client";
 
-import { FormEvent, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
+import type { FormEvent } from "react";
+
 import { supabase } from "../../lib/supabase";
 import styles from "./admin.module.css";
 
@@ -9,7 +11,7 @@ type DeNguVan = {
   tieu_de: string;
   lop: string | null;
   nhom: string | null;
-  the_loai: string | null;Ftype 
+  the_loai: string | null;
   dang_bai: string | null;
   chu_de: string | null;
   ngu_lieu: string | null;
@@ -21,7 +23,7 @@ type DeNguVan = {
   file_url: string | null;
   cong_khai: boolean;
   da_giao: boolean;
-lan_giao_cuoi: string | null;
+  lan_giao_cuoi: string | null;
 };
 
 type FormData = {
@@ -75,20 +77,36 @@ export default function AdminPage() {
   const [email, setEmail] = useState("");
   const [matKhau, setMatKhau] = useState("");
 
-  const [daDangNhap, setDaDangNhap] = useState(false);
-  const [laAdmin, setLaAdmin] = useState(false);
-  const [dangTai, setDangTai] = useState(true);
+  const [daDangNhap, setDaDangNhap] =
+    useState(false);
 
-  const [danhSach, setDanhSach] = useState<DeNguVan[]>([]);
-  const [form, setForm] = useState<FormData>(formMacDinh);
+  const [laAdmin, setLaAdmin] =
+    useState(false);
 
-  const [idDangSua, setIdDangSua] = useState<number | null>(null);
+  const [dangTai, setDangTai] =
+    useState(true);
 
-  const [thongBao, setThongBao] = useState("");
-  const [dangLuu, setDangLuu] = useState(false);
-  const [tuKhoa, setTuKhoa] = useState("");
-const [deDaChon, setDeDaChon] =
-  useState<number[]>([]);
+  const [danhSach, setDanhSach] =
+    useState<DeNguVan[]>([]);
+
+  const [form, setForm] =
+    useState<FormData>(formMacDinh);
+
+  const [idDangSua, setIdDangSua] =
+    useState<number | null>(null);
+
+  const [thongBao, setThongBao] =
+    useState("");
+
+  const [dangLuu, setDangLuu] =
+    useState(false);
+
+  const [tuKhoa, setTuKhoa] =
+    useState("");
+
+  const [deDaChon, setDeDaChon] =
+    useState<number[]>([]);
+
   useEffect(() => {
     kiemTraDangNhap();
   }, []);
@@ -109,9 +127,10 @@ const [deDaChon, setDeDaChon] =
 
     setDaDangNhap(true);
 
-    const { data, error } = await supabase.rpc(
-      "is_admin_user"
-    );
+    const { data, error } =
+      await supabase.rpc(
+        "is_admin_user"
+      );
 
     if (error || data !== true) {
       setLaAdmin(false);
@@ -126,16 +145,22 @@ const [deDaChon, setDeDaChon] =
     setDangTai(false);
   }
 
-  async function dangNhap(e: FormEvent) {
+  async function dangNhap(
+    e: FormEvent
+  ) {
     e.preventDefault();
 
-    setThongBao("Đang đăng nhập...");
+    setThongBao(
+      "Đang đăng nhập..."
+    );
 
     const { error } =
-      await supabase.auth.signInWithPassword({
-        email: email.trim(),
-        password: matKhau,
-      });
+      await supabase.auth.signInWithPassword(
+        {
+          email: email.trim(),
+          password: matKhau,
+        }
+      );
 
     if (error) {
       setThongBao(
@@ -156,16 +181,18 @@ const [deDaChon, setDeDaChon] =
     setDaDangNhap(false);
     setLaAdmin(false);
     setDanhSach([]);
+    setDeDaChon([]);
     setThongBao("");
   }
 
   async function taiDanhSach() {
-    const { data, error } = await supabase
-      .from("de_ngu_van")
-      .select("*")
-      .order("created_at", {
-        ascending: false,
-      });
+    const { data, error } =
+      await supabase
+        .from("de_ngu_van")
+        .select("*")
+        .order("created_at", {
+          ascending: false,
+        });
 
     if (error) {
       setThongBao(
@@ -175,7 +202,9 @@ const [deDaChon, setDeDaChon] =
       return;
     }
 
-    setDanhSach((data ?? []) as DeNguVan[]);
+    setDanhSach(
+      (data ?? []) as DeNguVan[]
+    );
   }
 
   function thayDoi(
@@ -190,7 +219,8 @@ const [deDaChon, setDeDaChon] =
 
   function taoPayload() {
     return {
-      tieu_de: form.tieu_de.trim(),
+      tieu_de:
+        form.tieu_de.trim(),
 
       lop:
         form.lop.trim() === ""
@@ -235,12 +265,16 @@ const [deDaChon, setDeDaChon] =
       thoi_gian:
         form.thoi_gian === ""
           ? null
-          : Number(form.thoi_gian),
+          : Number(
+              form.thoi_gian
+            ),
 
       so_diem:
         form.so_diem === ""
           ? null
-          : Number(form.so_diem),
+          : Number(
+              form.so_diem
+            ),
 
       muc_do:
         form.muc_do.trim() === ""
@@ -252,13 +286,17 @@ const [deDaChon, setDeDaChon] =
           ? null
           : form.file_url.trim(),
 
-      cong_khai: form.cong_khai,
+      cong_khai:
+        form.cong_khai,
 
-      updated_at: new Date().toISOString(),
+      updated_at:
+        new Date().toISOString(),
     };
   }
 
-  async function luuDe(e: FormEvent) {
+  async function luuDe(
+    e: FormEvent
+  ) {
     e.preventDefault();
 
     if (!form.tieu_de.trim()) {
@@ -271,18 +309,21 @@ const [deDaChon, setDeDaChon] =
     setDangLuu(true);
     setThongBao("");
 
-    const payload = taoPayload();
+    const payload =
+      taoPayload();
 
     if (idDangSua === null) {
-      const { error } = await supabase
-        .from("de_ngu_van")
-        .insert(payload);
+      const { error } =
+        await supabase
+          .from("de_ngu_van")
+          .insert(payload);
 
       if (error) {
         setThongBao(
           "Không thêm được đề: " +
             error.message
         );
+
         setDangLuu(false);
         return;
       }
@@ -291,16 +332,21 @@ const [deDaChon, setDeDaChon] =
         "✓ Đã thêm đề mới thành công."
       );
     } else {
-      const { error } = await supabase
-        .from("de_ngu_van")
-        .update(payload)
-        .eq("id", idDangSua);
+      const { error } =
+        await supabase
+          .from("de_ngu_van")
+          .update(payload)
+          .eq(
+            "id",
+            idDangSua
+          );
 
       if (error) {
         setThongBao(
           "Không sửa được đề: " +
             error.message
         );
+
         setDangLuu(false);
         return;
       }
@@ -318,33 +364,65 @@ const [deDaChon, setDeDaChon] =
     setDangLuu(false);
   }
 
-  function suaDe(item: DeNguVan) {
-    setIdDangSua(item.id);
+  function suaDe(
+    item: DeNguVan
+  ) {
+    setIdDangSua(
+      item.id
+    );
 
     setForm({
-      tieu_de: item.tieu_de ?? "",
-      lop: item.lop ?? "",
-      nhom: item.nhom ?? "",
-      the_loai: item.the_loai ?? "",
-      dang_bai: item.dang_bai ?? "",
-      chu_de: item.chu_de ?? "",
-      ngu_lieu: item.ngu_lieu ?? "",
-      cau_hoi: item.cau_hoi ?? "",
-      dap_an: item.dap_an ?? "",
+      tieu_de:
+        item.tieu_de ?? "",
+
+      lop:
+        item.lop ?? "",
+
+      nhom:
+        item.nhom ?? "",
+
+      the_loai:
+        item.the_loai ?? "",
+
+      dang_bai:
+        item.dang_bai ?? "",
+
+      chu_de:
+        item.chu_de ?? "",
+
+      ngu_lieu:
+        item.ngu_lieu ?? "",
+
+      cau_hoi:
+        item.cau_hoi ?? "",
+
+      dap_an:
+        item.dap_an ?? "",
 
       thoi_gian:
         item.thoi_gian === null
           ? ""
-          : String(item.thoi_gian),
+          : String(
+              item.thoi_gian
+            ),
 
       so_diem:
         item.so_diem === null
           ? ""
-          : String(item.so_diem),
+          : String(
+              item.so_diem
+            ),
 
-      muc_do: item.muc_do ?? "",
-      file_url: item.file_url ?? "",
-      cong_khai: item.cong_khai,
+      muc_do:
+        item.muc_do ?? "",
+
+      file_url:
+        item.file_url ?? "",
+
+      cong_khai:
+        Boolean(
+          item.cong_khai
+        ),
     });
 
     window.scrollTo({
@@ -363,16 +441,20 @@ const [deDaChon, setDeDaChon] =
     id: number,
     tieuDe: string
   ) {
-    const dongY = window.confirm(
-      `Cô có chắc muốn xóa đề:\n"${tieuDe}"?\n\nThao tác này không thể hoàn tác.`
-    );
+    const dongY =
+      window.confirm(
+        `Cô có chắc muốn xóa đề:\n"${tieuDe}"?\n\nThao tác này không thể hoàn tác.`
+      );
 
-    if (!dongY) return;
+    if (!dongY) {
+      return;
+    }
 
-    const { error } = await supabase
-      .from("de_ngu_van")
-      .delete()
-      .eq("id", id);
+    const { error } =
+      await supabase
+        .from("de_ngu_van")
+        .delete()
+        .eq("id", id);
 
     if (error) {
       setThongBao(
@@ -386,19 +468,32 @@ const [deDaChon, setDeDaChon] =
       "✓ Đã xóa đề."
     );
 
+    setDeDaChon((cu) =>
+      cu.filter(
+        (x) => x !== id
+      )
+    );
+
     await taiDanhSach();
   }
 
   async function doiCongKhai(
     item: DeNguVan
   ) {
-    const { error } = await supabase
-      .from("de_ngu_van")
-      .update({
-        cong_khai: !item.cong_khai,
-        updated_at: new Date().toISOString(),
-      })
-      .eq("id", item.id);
+    const { error } =
+      await supabase
+        .from("de_ngu_van")
+        .update({
+          cong_khai:
+            !item.cong_khai,
+
+          updated_at:
+            new Date().toISOString(),
+        })
+        .eq(
+          "id",
+          item.id
+        );
 
     if (error) {
       setThongBao(
@@ -410,307 +505,268 @@ const [deDaChon, setDeDaChon] =
 
     await taiDanhSach();
   }
-function doiChonDe(id: number) {
-  setDeDaChon((cu) =>
-    cu.includes(id)
-      ? cu.filter((x) => x !== id)
-      : [...cu, id]
-  );
-}
 
-function chonTatCa() {
-  const ids = danhSachLoc.map(
-    (item) => item.id
-  );
-
-  const daChonHet =
-    ids.length > 0 &&
-    ids.every((id) =>
-      deDaChon.includes(id)
-    );
-
-  if (daChonHet) {
-    setDeDaChon([]);
-  } else {
-    setDeDaChon(ids);
-  }
-}
-
-async function doiTrangThaiHangLoat(
-  congKhai: boolean
-) {
-  if (!deDaChon.length) {
-    setThongBao(
-      "Cô chưa chọn đề nào."
-    );
-    return;
-  }
-
-  const { error } = await supabase
-    .from("de_ngu_van")
-    .update({
-      cong_khai: congKhai,
-      updated_at:
-        new Date().toISOString(),
-    })
-    .in("id", deDaChon);
-
-  if (error) {
-    setThongBao(
-      "Không cập nhật được: " +
-        error.message
-    );
-    return;
-  }
-
-  setThongBao(
-    congKhai
-      ? `✓ Đã công khai ${deDaChon.length} đề.`
-      : `✓ Đã ẩn ${deDaChon.length} đề.`
-  );
-
-  setDeDaChon([]);
-  await taiDanhSach();
-}
-async function saoChepLinkGiaoBai(
-  item: DeNguVan
-) {
-  if (!item.cong_khai) {
-    setThongBao(
-      "Đề này đang ẩn. Cô cần công khai đề trước khi gửi link cho học sinh."
-    );
-    return;
-  }
-
-  const link =
-    `https://hong7214.github.io/ngan-hang-de-ngu-van/?de=${item.id}`;
-
-  try {
-    await navigator.clipboard.writeText(link);
-
-    await supabase
-      .from("de_ngu_van")
-      .update({
-        da_giao: true,
-        lan_giao_cuoi:
-          new Date().toISOString(),
-        updated_at:
-          new Date().toISOString(),
-      })
-      .eq("id", item.id);
-
-    setThongBao(
-      `✓ Đã sao chép link "${item.tieu_de}". Đề cũng đã được đánh dấu ĐÃ GIAO.`
-    );
-
-    await taiDanhSach();
-  } catch {
-    setThongBao(
-      "Không sao chép được link. Cô thử lại."
+  function doiChonDe(
+    id: number
+  ) {
+    setDeDaChon((cu) =>
+      cu.includes(id)
+        ? cu.filter(
+            (x) => x !== id
+          )
+        : [...cu, id]
     );
   }
-}
-async function xoaHangLoat() 
-  if (!deDaChon.length) {
-    setThongBao(
-      "Cô chưa chọn đề nào."
+
+  const danhSachLoc =
+    danhSach.filter(
+      (item) => {
+        const q =
+          tuKhoa
+            .trim()
+            .toLowerCase();
+
+        if (!q) {
+          return true;
+        }
+
+        const text =
+          `${item.tieu_de ?? ""} ` +
+          `${item.lop ?? ""} ` +
+          `${item.nhom ?? ""} ` +
+          `${item.the_loai ?? ""} ` +
+          `${item.chu_de ?? ""}`;
+
+        return text
+          .toLowerCase()
+          .includes(q);
+      }
     );
-    return;
+
+  function chonTatCa() {
+    const ids =
+      danhSachLoc.map(
+        (item) =>
+          item.id
+      );
+
+    const daChonHet =
+      ids.length > 0 &&
+      ids.every(
+        (id) =>
+          deDaChon.includes(
+            id
+          )
+      );
+
+    if (daChonHet) {
+      setDeDaChon([]);
+    } else {
+      setDeDaChon(ids);
+    }
   }
 
-  const dongY =
-    window.confirm(
-      `Cô có chắc muốn xóa ${deDaChon.length} đề đã chọn?\n\nKhông thể hoàn tác.`
-    );
+  async function doiTrangThaiHangLoat(
+    congKhai: boolean
+  ) {
+    if (
+      deDaChon.length === 0
+    ) {
+      setThongBao(
+        "Cô chưa chọn đề nào."
+      );
+      return;
+    }
 
-  if (!dongY) return;
+    const { error } =
+      await supabase
+        .from("de_ngu_van")
+        .update({
+          cong_khai:
+            congKhai,
 
-  const { error } = await supabase
-    .from("de_ngu_van")
-    .delete()
-    .in("id", deDaChon);
-
-  if (error) {
-    setThongBao(
-      "Không xóa được: " +
-        error.message
-    );
-    return;
-  }
-
-  setThongBao(
-    `✓ Đã xóa ${deDaChon.length} đề.`
-  );
-
-  setDeDaChon([]);
-  await taiDanhSach();
-}
-  async function doiDaGiao(item: DeNguVan) {
-  const trangThaiMoi = !item.da_giao;
-
-  const { error } = await supabase
-    .from("de_ngu_van")
-    .update({
-      da_giao: trangThaiMoi,
-      lan_giao_cuoi: trangThaiMoi
-        ? new Date().toISOString()
-        : null,
-      updated_at: new Date().toISOString(),
-    })
-    .eq("id", item.id);
-
-  if (error) {
-    setThongBao(
-      "Không đổi được trạng thái giao bài: " +
-        error.message
-    );
-    return;
-  }
-
-  setThongBao(
-    trangThaiMoi
-      ? `✓ Đã đánh dấu "${item.tieu_de}" là đã giao.`
-      : `Đã chuyển "${item.tieu_de}" về chưa giao.`
-  );
-async function saoChepLinkGiaoBai(
-  item: DeNguVan
-) {
-  if (!item.cong_khai) {
-    setThongBao(
-      "Đề này đang ẩn. Cô cần công khai đề trước khi gửi link cho học sinh."
-    );
-    return;
-  }
-
-  const link =
-    `https://hong7214.github.io/ngan-hang-de-ngu-van/?de=${item.id}`;
-
-  try {
-    await navigator.clipboard.writeText(link);
-
-    await supabase
-      .from("de_ngu_van")
-      .update({
-        da_giao: true,
-        lan_giao_cuoi:
-          new Date().toISOString(),
-        updated_at:
-          new Date().toISOString(),
-      })
-      .eq("id", item.id);
-
-    setThongBao(
-      `✓ Đã sao chép link "${item.tieu_de}". Đề cũng đã được đánh dấu ĐÃ GIAO.`
-    );
-
-    await taiDanhSach();
-  } catch {
-    setThongBao(
-      "Không sao chép được link. Cô thử lại."
-    );
-  }
-}
-  await taiDanhSach();
-}
-async function doiDaGiao(item: DeNguVan) {
-  const trangThaiMoi = !item.da_giao;
-
-  const { error } = await supabase
-    .from("de_ngu_van")
-    .update({
-      da_giao: trangThaiMoi,
-      lan_giao_cuoi: trangThaiMoi
-        ? new Date().toISOString()
-        : null,
-      updated_at: new Date().toISOString(),
-    })
-    .eq("id", item.id);
-
-  if (error) {
-    setThongBao(
-      "Không đổi được trạng thái giao bài: " +
-        error.message
-    );
-    return;
-  }
-
-  setThongBao(
-    trangThaiMoi
-      ? `✓ Đã đánh dấu "${item.tieu_de}" là đã giao.`
-      : `Đã chuyển "${item.tieu_de}" về chưa giao.`
-  );
-
-  await taiDanhSach();
-}
-async function saoChepLinkGiaoBai(
-  item: DeNguVan
-) {
-  if (!item.cong_khai) {
-    setThongBao(
-      "Đề này đang ẩn. Cô cần công khai đề trước khi giao cho học sinh."
-    );
-    return;
-  }
-
-  const link =
-    `https://hong7214.github.io/ngan-hang-de-ngu-van/?de=${item.id}`;
-
-  try {
-    await navigator.clipboard.writeText(link);
-
-    const { error } = await supabase
-      .from("de_ngu_van")
-      .update({
-        da_giao: true,
-        lan_giao_cuoi:
-          new Date().toISOString(),
-        updated_at:
-          new Date().toISOString(),
-      })
-      .eq("id", item.id);
+          updated_at:
+            new Date().toISOString(),
+        })
+        .in(
+          "id",
+          deDaChon
+        );
 
     if (error) {
       setThongBao(
-        "Đã sao chép link nhưng chưa cập nhật được trạng thái: " +
+        "Không cập nhật được: " +
           error.message
       );
       return;
     }
 
     setThongBao(
-      `✓ Đã sao chép link giao bài "${item.tieu_de}".`
+      congKhai
+        ? `✓ Đã công khai ${deDaChon.length} đề.`
+        : `✓ Đã ẩn ${deDaChon.length} đề.`
+    );
+
+    setDeDaChon([]);
+
+    await taiDanhSach();
+  }
+
+  async function xoaHangLoat() {
+    if (
+      deDaChon.length === 0
+    ) {
+      setThongBao(
+        "Cô chưa chọn đề nào."
+      );
+      return;
+    }
+
+    const dongY =
+      window.confirm(
+        `Cô có chắc muốn xóa ${deDaChon.length} đề đã chọn?\n\nKhông thể hoàn tác.`
+      );
+
+    if (!dongY) {
+      return;
+    }
+
+    const { error } =
+      await supabase
+        .from("de_ngu_van")
+        .delete()
+        .in(
+          "id",
+          deDaChon
+        );
+
+    if (error) {
+      setThongBao(
+        "Không xóa được: " +
+          error.message
+      );
+      return;
+    }
+
+    setThongBao(
+      `✓ Đã xóa ${deDaChon.length} đề.`
+    );
+
+    setDeDaChon([]);
+
+    await taiDanhSach();
+  }
+
+  async function doiDaGiao(
+    item: DeNguVan
+  ) {
+    const trangThaiMoi =
+      !item.da_giao;
+
+    const { error } =
+      await supabase
+        .from("de_ngu_van")
+        .update({
+          da_giao:
+            trangThaiMoi,
+
+          lan_giao_cuoi:
+            trangThaiMoi
+              ? new Date().toISOString()
+              : null,
+
+          updated_at:
+            new Date().toISOString(),
+        })
+        .eq(
+          "id",
+          item.id
+        );
+
+    if (error) {
+      setThongBao(
+        "Không đổi được trạng thái giao bài: " +
+          error.message
+      );
+      return;
+    }
+
+    setThongBao(
+      trangThaiMoi
+        ? `✓ Đã đánh dấu "${item.tieu_de}" là đã giao.`
+        : `Đã chuyển "${item.tieu_de}" về chưa giao.`
     );
 
     await taiDanhSach();
-  } catch {
-    setThongBao(
-      "Không sao chép được link. Cô thử lại."
-    );
   }
-}
-  const danhSachLoc = danhSach.filter(
-    (item) => {
-      const q = tuKhoa
-        .trim()
-        .toLowerCase();
 
-      if (!q) return true;
-
-      const text =
-        `${item.tieu_de ?? ""} ${
-          item.lop ?? ""
-        } ${item.nhom ?? ""} ${
-          item.the_loai ?? ""
-        } ${item.chu_de ?? ""}`
-          .toLowerCase();
-
-      return text.includes(q);
+  async function saoChepLinkGiaoBai(
+    item: DeNguVan
+  ) {
+    if (
+      !item.cong_khai
+    ) {
+      setThongBao(
+        "Đề này đang ẩn. Cô cần công khai đề trước khi giao cho học sinh."
+      );
+      return;
     }
-  );
+
+    const link =
+      `https://hong7214.github.io/ngan-hang-de-ngu-van/?de=${item.id}`;
+
+    try {
+      await navigator.clipboard.writeText(
+        link
+      );
+
+      const { error } =
+        await supabase
+          .from(
+            "de_ngu_van"
+          )
+          .update({
+            da_giao:
+              true,
+
+            lan_giao_cuoi:
+              new Date().toISOString(),
+
+            updated_at:
+              new Date().toISOString(),
+          })
+          .eq(
+            "id",
+            item.id
+          );
+
+      if (error) {
+        setThongBao(
+          "Đã sao chép link nhưng chưa cập nhật được trạng thái: " +
+            error.message
+        );
+        return;
+      }
+
+      setThongBao(
+        `✓ Đã sao chép link giao bài "${item.tieu_de}".`
+      );
+
+      await taiDanhSach();
+    } catch {
+      setThongBao(
+        "Không sao chép được link. Cô thử lại."
+      );
+    }
+  }
 
   if (dangTai) {
     return (
-      <main className={styles.loading}>
+      <main
+        className={
+          styles.loading
+        }
+      >
         Đang kiểm tra tài khoản...
       </main>
     );
@@ -718,11 +774,21 @@ async function saoChepLinkGiaoBai(
 
   if (!daDangNhap) {
     return (
-      <main className={styles.loginPage}>
-
-        <section className={styles.loginCard}>
-
-          <div className={styles.logo}>
+      <main
+        className={
+          styles.loginPage
+        }
+      >
+        <section
+          className={
+            styles.loginCard
+          }
+        >
+          <div
+            className={
+              styles.logo
+            }
+          >
             NV
           </div>
 
@@ -730,12 +796,19 @@ async function saoChepLinkGiaoBai(
             Quản trị ngân hàng đề
           </h1>
 
-          <p className={styles.loginNote}>
+          <p
+            className={
+              styles.loginNote
+            }
+          >
             Dành riêng cho giáo viên quản trị.
           </p>
 
-          <form onSubmit={dangNhap}>
-
+          <form
+            onSubmit={
+              dangNhap
+            }
+          >
             <label>
               Email quản trị
             </label>
@@ -744,7 +817,9 @@ async function saoChepLinkGiaoBai(
               type="email"
               value={email}
               onChange={(e) =>
-                setEmail(e.target.value)
+                setEmail(
+                  e.target.value
+                )
               }
               required
               placeholder="Email"
@@ -758,7 +833,9 @@ async function saoChepLinkGiaoBai(
               type="password"
               value={matKhau}
               onChange={(e) =>
-                setMatKhau(e.target.value)
+                setMatKhau(
+                  e.target.value
+                )
               }
               required
               placeholder="Mật khẩu"
@@ -766,60 +843,80 @@ async function saoChepLinkGiaoBai(
 
             <button
               type="submit"
-              className={styles.loginButton}
+              className={
+                styles.loginButton
+              }
             >
               Đăng nhập
             </button>
-
           </form>
 
           {thongBao && (
-            <div className={styles.message}>
+            <div
+              className={
+                styles.message
+              }
+            >
               {thongBao}
             </div>
           )}
-
         </section>
-
       </main>
     );
   }
 
   if (!laAdmin) {
     return (
-      <main className={styles.loginPage}>
-
-        <section className={styles.loginCard}>
-
+      <main
+        className={
+          styles.loginPage
+        }
+      >
+        <section
+          className={
+            styles.loginCard
+          }
+        >
           <h1>
             Không có quyền quản trị
           </h1>
 
           <p>
-            Tài khoản này đã đăng nhập
-            nhưng chưa được cấp quyền Admin.
+            Tài khoản này đã đăng nhập nhưng chưa được cấp quyền Admin.
           </p>
 
           <button
-            className={styles.loginButton}
-            onClick={dangXuat}
+            className={
+              styles.loginButton
+            }
+            onClick={
+              dangXuat
+            }
           >
             Đăng xuất
           </button>
-
         </section>
-
       </main>
     );
   }
 
   return (
-    <main className={styles.adminPage}>
-
-      <header className={styles.header}>
-
+    <main
+      className={
+        styles.adminPage
+      }
+    >
+      <header
+        className={
+          styles.header
+        }
+      >
         <div>
-          <div className={styles.smallTitle}>
+          <div
+            className={
+              styles.smallTitle
+            }
+          >
             NGỮ VĂN THCS
           </div>
 
@@ -828,64 +925,90 @@ async function saoChepLinkGiaoBai(
           </h1>
 
           <p>
-            Thêm, sửa, xóa và quản lý
-            đề giao cho học sinh.
+            Thêm, sửa, xóa và quản lý đề giao cho học sinh.
           </p>
         </div>
 
         <button
-          onClick={dangXuat}
-          className={styles.logout}
+          onClick={
+            dangXuat
+          }
+          className={
+            styles.logout
+          }
         >
           Đăng xuất
         </button>
-
       </header>
 
-      <div className={styles.container}>
-
-        <section className={styles.formCard}>
-
-          <div className={styles.sectionTitle}>
-
+      <div
+        className={
+          styles.container
+        }
+      >
+        <section
+          className={
+            styles.formCard
+          }
+        >
+          <div
+            className={
+              styles.sectionTitle
+            }
+          >
             <div>
               <span>
-                {idDangSua === null
+                {idDangSua ===
+                null
                   ? "THÊM ĐỀ MỚI"
                   : "CHỈNH SỬA ĐỀ"}
               </span>
 
               <h2>
-                {idDangSua === null
+                {idDangSua ===
+                null
                   ? "Nhập nội dung đề"
                   : `Đang sửa đề #${idDangSua}`}
               </h2>
             </div>
 
-            {idDangSua !== null && (
+            {idDangSua !==
+              null && (
               <button
                 type="button"
-                onClick={huySua}
-                className={styles.secondary}
+                onClick={
+                  huySua
+                }
+                className={
+                  styles.secondary
+                }
               >
                 Hủy sửa
               </button>
             )}
-
           </div>
 
           <form
-            onSubmit={luuDe}
-            className={styles.form}
+            onSubmit={
+              luuDe
+            }
+            className={
+              styles.form
+            }
           >
-
-            <div className={styles.full}>
+            <div
+              className={
+                styles.full
+              }
+            >
               <label>
                 Tên đề *
               </label>
 
               <input
-                value={form.tieu_de}
+                value={
+                  form.tieu_de
+                }
                 onChange={(e) =>
                   thayDoi(
                     "tieu_de",
@@ -898,10 +1021,14 @@ async function saoChepLinkGiaoBai(
             </div>
 
             <div>
-              <label>Lớp</label>
+              <label>
+                Lớp
+              </label>
 
               <select
-                value={form.lop}
+                value={
+                  form.lop
+                }
                 onChange={(e) =>
                   thayDoi(
                     "lop",
@@ -912,12 +1039,15 @@ async function saoChepLinkGiaoBai(
                 <option value="6">
                   Lớp 6
                 </option>
+
                 <option value="7">
                   Lớp 7
                 </option>
+
                 <option value="8">
                   Lớp 8
                 </option>
+
                 <option value="9">
                   Lớp 9
                 </option>
@@ -925,10 +1055,14 @@ async function saoChepLinkGiaoBai(
             </div>
 
             <div>
-              <label>Nhóm</label>
+              <label>
+                Nhóm
+              </label>
 
               <select
-                value={form.nhom}
+                value={
+                  form.nhom
+                }
                 onChange={(e) =>
                   thayDoi(
                     "nhom",
@@ -936,17 +1070,26 @@ async function saoChepLinkGiaoBai(
                   )
                 }
               >
-                <option>Thơ</option>
-                <option>Truyện</option>
+                <option>
+                  Thơ
+                </option>
+
+                <option>
+                  Truyện
+                </option>
+
                 <option>
                   Nghị luận xã hội
                 </option>
+
                 <option>
                   Nghị luận văn học
                 </option>
+
                 <option>
                   Viết đoạn văn
                 </option>
+
                 <option>
                   Đề tổng hợp
                 </option>
@@ -954,10 +1097,14 @@ async function saoChepLinkGiaoBai(
             </div>
 
             <div>
-              <label>Thể loại</label>
+              <label>
+                Thể loại
+              </label>
 
               <select
-                value={form.the_loai}
+                value={
+                  form.the_loai
+                }
                 onChange={(e) =>
                   thayDoi(
                     "the_loai",
@@ -967,7 +1114,11 @@ async function saoChepLinkGiaoBai(
               >
                 {THE_LOAI_THO.map(
                   (item) => (
-                    <option key={item}>
+                    <option
+                      key={
+                        item
+                      }
+                    >
                       {item}
                     </option>
                   )
@@ -992,10 +1143,14 @@ async function saoChepLinkGiaoBai(
             </div>
 
             <div>
-              <label>Dạng bài</label>
+              <label>
+                Dạng bài
+              </label>
 
               <select
-                value={form.dang_bai}
+                value={
+                  form.dang_bai
+                }
                 onChange={(e) =>
                   thayDoi(
                     "dang_bai",
@@ -1025,11 +1180,19 @@ async function saoChepLinkGiaoBai(
               </select>
             </div>
 
-            <div className={styles.full}>
-              <label>Chủ đề</label>
+            <div
+              className={
+                styles.full
+              }
+            >
+              <label>
+                Chủ đề
+              </label>
 
               <input
-                value={form.chu_de}
+                value={
+                  form.chu_de
+                }
                 onChange={(e) =>
                   thayDoi(
                     "chu_de",
@@ -1040,14 +1203,20 @@ async function saoChepLinkGiaoBai(
               />
             </div>
 
-            <div className={styles.full}>
+            <div
+              className={
+                styles.full
+              }
+            >
               <label>
                 Ngữ liệu / văn bản / bài thơ
               </label>
 
               <textarea
                 rows={9}
-                value={form.ngu_lieu}
+                value={
+                  form.ngu_lieu
+                }
                 onChange={(e) =>
                   thayDoi(
                     "ngu_lieu",
@@ -1058,32 +1227,46 @@ async function saoChepLinkGiaoBai(
               />
             </div>
 
-            <div className={styles.full}>
+            <div
+              className={
+                styles.full
+              }
+            >
               <label>
                 Câu hỏi
               </label>
 
               <textarea
                 rows={8}
-                value={form.cau_hoi}
+                value={
+                  form.cau_hoi
+                }
                 onChange={(e) =>
                   thayDoi(
                     "cau_hoi",
                     e.target.value
                   )
                 }
-                placeholder={"Câu 1. ...\nCâu 2. ...\nCâu 3. ..."}
+                placeholder={
+                  "Câu 1. ...\nCâu 2. ...\nCâu 3. ..."
+                }
               />
             </div>
 
-            <div className={styles.full}>
+            <div
+              className={
+                styles.full
+              }
+            >
               <label>
                 Đáp án / hướng dẫn chấm
               </label>
 
               <textarea
                 rows={8}
-                value={form.dap_an}
+                value={
+                  form.dap_an
+                }
                 onChange={(e) =>
                   thayDoi(
                     "dap_an",
@@ -1102,7 +1285,9 @@ async function saoChepLinkGiaoBai(
               <input
                 type="number"
                 min="1"
-                value={form.thoi_gian}
+                value={
+                  form.thoi_gian
+                }
                 onChange={(e) =>
                   thayDoi(
                     "thoi_gian",
@@ -1121,7 +1306,9 @@ async function saoChepLinkGiaoBai(
                 type="number"
                 min="0"
                 step="0.25"
-                value={form.so_diem}
+                value={
+                  form.so_diem
+                }
                 onChange={(e) =>
                   thayDoi(
                     "so_diem",
@@ -1131,13 +1318,19 @@ async function saoChepLinkGiaoBai(
               />
             </div>
 
-            <div className={styles.full}>
+            <div
+              className={
+                styles.full
+              }
+            >
               <label>
                 Mức độ
               </label>
 
               <input
-                value={form.muc_do}
+                value={
+                  form.muc_do
+                }
                 onChange={(e) =>
                   thayDoi(
                     "muc_do",
@@ -1148,13 +1341,19 @@ async function saoChepLinkGiaoBai(
               />
             </div>
 
-            <div className={styles.full}>
+            <div
+              className={
+                styles.full
+              }
+            >
               <label>
                 Link file Word/PDF
               </label>
 
               <input
-                value={form.file_url}
+                value={
+                  form.file_url
+                }
                 onChange={(e) =>
                   thayDoi(
                     "file_url",
@@ -1184,39 +1383,58 @@ async function saoChepLinkGiaoBai(
                 }
               />
 
-              <label htmlFor="cong-khai">
+              <label
+                htmlFor="cong-khai"
+              >
                 Công khai cho học sinh
               </label>
             </div>
 
-            <div className={styles.full}>
+            <div
+              className={
+                styles.full
+              }
+            >
               <button
                 type="submit"
-                className={styles.saveButton}
-                disabled={dangLuu}
+                className={
+                  styles.saveButton
+                }
+                disabled={
+                  dangLuu
+                }
               >
                 {dangLuu
                   ? "Đang lưu..."
-                  : idDangSua === null
+                  : idDangSua ===
+                    null
                   ? "＋ Thêm đề vào ngân hàng"
                   : "✓ Lưu thay đổi"}
               </button>
             </div>
-
           </form>
 
           {thongBao && (
-            <div className={styles.message}>
+            <div
+              className={
+                styles.message
+              }
+            >
               {thongBao}
             </div>
           )}
-
         </section>
 
-        <section className={styles.listCard}>
-
-          <div className={styles.listHeader}>
-
+        <section
+          className={
+            styles.listCard
+          }
+        >
+          <div
+            className={
+              styles.listHeader
+            }
+          >
             <div>
               <span>
                 NGÂN HÀNG HIỆN CÓ
@@ -1228,8 +1446,12 @@ async function saoChepLinkGiaoBai(
             </div>
 
             <input
-              className={styles.search}
-              value={tuKhoa}
+              className={
+                styles.search
+              }
+              value={
+                tuKhoa
+              }
               onChange={(e) =>
                 setTuKhoa(
                   e.target.value
@@ -1237,87 +1459,140 @@ async function saoChepLinkGiaoBai(
               }
               placeholder="🔎 Tìm đề..."
             />
-
           </div>
-<div className={styles.bulkBar}>
 
-  <button
-    onClick={chonTatCa}
-    className={styles.selectAll}
-  >
-    ☑ Chọn tất cả
-  </button>
+          <div
+            className={
+              styles.bulkBar
+            }
+          >
+            <button
+              type="button"
+              onClick={
+                chonTatCa
+              }
+              className={
+                styles.selectAll
+              }
+            >
+              ☑ Chọn tất cả
+            </button>
 
-  <span>
-    Đã chọn:
-    <strong>
-      {" "}
-      {deDaChon.length}
-    </strong>
-  </span>
+            <span>
+              Đã chọn:{" "}
+              <strong>
+                {deDaChon.length}
+              </strong>
+            </span>
 
-  <button
-    onClick={() =>
-      doiTrangThaiHangLoat(true)
-    }
-    className={styles.bulkPublic}
-  >
-    👁 Công khai
-  </button>
+            <button
+              type="button"
+              onClick={() =>
+                doiTrangThaiHangLoat(
+                  true
+                )
+              }
+              className={
+                styles.bulkPublic
+              }
+            >
+              👁 Công khai
+            </button>
 
-  <button
-    onClick={() =>
-      doiTrangThaiHangLoat(false)
-    }
-    className={styles.bulkHide}
-  >
-    🙈 Ẩn
-  </button>
+            <button
+              type="button"
+              onClick={() =>
+                doiTrangThaiHangLoat(
+                  false
+                )
+              }
+              className={
+                styles.bulkHide
+              }
+            >
+              🙈 Ẩn
+            </button>
 
-  <button
-    onClick={xoaHangLoat}
-    className={styles.bulkDelete}
-  >
-    🗑 Xóa
-  </button>
+            <button
+              type="button"
+              onClick={
+                xoaHangLoat
+              }
+              className={
+                styles.bulkDelete
+              }
+            >
+              🗑 Xóa
+            </button>
+          </div>
 
-</div>
-          <div className={styles.tableWrap}>
-
+          <div
+            className={
+              styles.tableWrap
+            }
+          >
             <table>
-
               <thead>
-              <tr>
-  <th>Chọn</th>
-  <th>Đề</th>
-                  <th>Lớp</th>
-                  <th>Thể loại</th>
-               <th>Trạng thái</th>
-<th>Giao bài</th>
-<th>Thao tác</th>
+                <tr>
+                  <th>
+                    Chọn
+                  </th>
+
+                  <th>
+                    Đề
+                  </th>
+
+                  <th>
+                    Lớp
+                  </th>
+
+                  <th>
+                    Thể loại
+                  </th>
+
+                  <th>
+                    Trạng thái
+                  </th>
+
+                  <th>
+                    Giao bài
+                  </th>
+
+                  <th>
+                    Thao tác
+                  </th>
                 </tr>
               </thead>
 
               <tbody>
-
                 {danhSachLoc.map(
                   (item) => (
+                    <tr
+                      key={
+                        item.id
+                      }
+                    >
+                      <td>
+                        <input
+                          type="checkbox"
+                          checked={
+                            deDaChon.includes(
+                              item.id
+                            )
+                          }
+                          onChange={() =>
+                            doiChonDe(
+                              item.id
+                            )
+                          }
+                        />
+                      </td>
 
-                    <tr key={item.id}>
-<td>
-  <input
-    type="checkbox"
-    checked={deDaChon.includes(
-      item.id
-    )}
-    onChange={() =>
-      doiChonDe(item.id)
-    }
-  />
-</td>
                       <td>
                         <strong>
-                          {item.tieu_de}
+                          {
+                            item.tieu_de
+                          }
                         </strong>
 
                         <small>
@@ -1337,51 +1612,8 @@ async function saoChepLinkGiaoBai(
                       </td>
 
                       <td>
-                        <td>
-  <div className={styles.assignActions}>
-
-    <button
-      onClick={() =>
-        doiDaGiao(item)
-      }
-      className={
-        item.da_giao
-          ? styles.assigned
-          : styles.notAssigned
-      }
-    >
-      {item.da_giao
-        ? "✓ Đã giao"
-        : "Chưa giao"}
-    </button>
-
-    <button
-      onClick={() =>
-        saoChepLinkGiaoBai(item)
-      }
-      className={styles.copyLink}
-    >
-      🔗 Lấy link
-    </button>
-
-    {item.da_giao &&
-      item.lan_giao_cuoi && (
-        <small
-          className={
-            styles.assignedDate
-          }
-        >
-          {new Date(
-            item.lan_giao_cuoi
-          ).toLocaleDateString(
-            "vi-VN"
-          )}
-        </small>
-      )}
-
-  </div>
-</td>
                         <button
+                          type="button"
                           onClick={() =>
                             doiCongKhai(
                               item
@@ -1398,35 +1630,62 @@ async function saoChepLinkGiaoBai(
                             : "Đang ẩn"}
                         </button>
                       </td>
-<td>
-  <div className={styles.assignActions}>
 
-    <button
-      onClick={() =>
-        doiDaGiao(item)
-      }
-      className={
-        item.da_giao
-          ? styles.assigned
-          : styles.notAssigned
-      }
-    >
-      {item.da_giao
-        ? "✓ Đã giao"
-        : "Chưa giao"}
-    </button>
+                      <td>
+                        <div
+                          className={
+                            styles.assignActions
+                          }
+                        >
+                          <button
+                            type="button"
+                            onClick={() =>
+                              doiDaGiao(
+                                item
+                              )
+                            }
+                            className={
+                              item.da_giao
+                                ? styles.assigned
+                                : styles.notAssigned
+                            }
+                          >
+                            {item.da_giao
+                              ? "✓ Đã giao"
+                              : "Chưa giao"}
+                          </button>
 
-    <button
-      onClick={() =>
-        saoChepLinkGiaoBai(item)
-      }
-      className={styles.copyLink}
-    >
-      🔗 Lấy link
-    </button>
+                          <button
+                            type="button"
+                            onClick={() =>
+                              saoChepLinkGiaoBai(
+                                item
+                              )
+                            }
+                            className={
+                              styles.copyLink
+                            }
+                          >
+                            🔗 Lấy link
+                          </button>
 
-  </div>
-</td>
+                          {item.da_giao &&
+                            item.lan_giao_cuoi && (
+                              <small
+                                className={
+                                  styles.assignedDate
+                                }
+                              >
+                                {new Date(
+                                  item.lan_giao_cuoi
+                                ).toLocaleDateString(
+                                  "vi-VN"
+                                )}
+                              </small>
+                            )}
+                        </div>
+                      </td>
+
                       <td>
                         <div
                           className={
@@ -1434,8 +1693,11 @@ async function saoChepLinkGiaoBai(
                           }
                         >
                           <button
+                            type="button"
                             onClick={() =>
-                              suaDe(item)
+                              suaDe(
+                                item
+                              )
                             }
                             className={
                               styles.edit
@@ -1445,6 +1707,7 @@ async function saoChepLinkGiaoBai(
                           </button>
 
                           <button
+                            type="button"
                             onClick={() =>
                               xoaDe(
                                 item.id,
@@ -1459,22 +1722,14 @@ async function saoChepLinkGiaoBai(
                           </button>
                         </div>
                       </td>
-
                     </tr>
-
                   )
                 )}
-
               </tbody>
-
             </table>
-
           </div>
-
         </section>
-
       </div>
-
     </main>
   );
 }
