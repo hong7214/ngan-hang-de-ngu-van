@@ -739,3 +739,45 @@ footer span {
     font-size: 16px;
   }
 }
+body {
+  font-family:
+    "Segoe UI",
+    "Arial",
+    sans-serif;
+}
+
+.app-title {
+  margin: 10px 0 14px !important;
+  line-height: 1 !important;
+  letter-spacing: -0.045em;
+}
+
+.app-title-main {
+  display: block;
+  color: white !important;
+  font-size:
+    clamp(38px, 4vw, 58px);
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.app-title-vietnamese {
+  display: block;
+  margin-top: 8px;
+  color: #ffe49d !important;
+  font-size:
+    clamp(42px, 4.4vw, 62px);
+  font-weight: 850;
+  letter-spacing: -0.035em;
+}
+
+.card h2 {
+  font-weight: 800;
+  letter-spacing: -0.025em;
+}
+
+@media (max-width: 800px) {
+  .app-title-main {
+    white-space: normal;
+  }
+}
