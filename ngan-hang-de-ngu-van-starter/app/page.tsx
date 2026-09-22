@@ -38,9 +38,9 @@ const THE_LOAI_THO = [
   bằng thông tin thật của giáo viên.
 */
 const THONG_TIN_GV = {
-  hoTen: "Tên giáo viên",
-  donVi: "Giáo viên Ngữ văn THCS",
-  loiNhan: "Kho học liệu dành cho học sinh ôn luyện và rèn kỹ năng Ngữ văn.",
+  hoTen: "Cô Nguyễn Thị A",
+  donVi: "Giáo viên Ngữ văn - Trường THCS ...",
+  loiNhan: "Chúc các em học tốt, tự tin và tiến bộ mỗi ngày.",
 };
 
 function khongDau(text: string) {
