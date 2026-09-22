@@ -25,7 +25,7 @@ type DeNhap = {
 export default function ImportPage() {
   const [lopMacDinh, setLopMacDinh] = useState("9");
 
-  const [danhSach, setDanhSach] =
+  const [danhSach, setDanhSach] 
     useState<DeNhap[]>([]);
 
   const [dangDoc, setDangDoc] =
@@ -311,7 +311,12 @@ export default function ImportPage() {
     const loi: string[] = [];
 
     for (const file of files) {
-      try {
+  try {
+
+    // Bỏ qua file tạm do Microsoft Word tạo ra
+    if (file.name.startsWith("~$")) {
+      continue;
+    }
         const tenThuong =
           file.name.toLowerCase();
 
