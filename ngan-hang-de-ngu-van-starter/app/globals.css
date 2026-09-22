@@ -1100,3 +1100,692 @@ body {
   border-radius: 14px;
   padding: 18px;
 }
+/* =====================================================
+   GIAO DIỆN HỒNG TRẺ TRUNG - NGÂN HÀNG ĐỀ NGỮ VĂN
+   DÁN Ở CUỐI FILE globals.css
+===================================================== */
+
+:root {
+  --pink-main: #ec4899;
+  --pink-dark: #be185d;
+  --pink-soft: #fce7f3;
+  --pink-light: #fff1f7;
+  --pink-pale: #fff7fb;
+  --purple-pink: #a855f7;
+  --text-main: #3f2d3a;
+  --text-soft: #7d6173;
+}
+
+/* NỀN TOÀN TRANG */
+
+body {
+  background:
+    linear-gradient(
+      180deg,
+      #fff8fc 0%,
+      #fff1f7 45%,
+      #fff9fc 100%
+    ) !important;
+
+  color: var(--text-main);
+}
+
+/* =====================================================
+   ĐẦU TRANG
+===================================================== */
+
+.hero {
+  background:
+    linear-gradient(
+      135deg,
+      #ec4899 0%,
+      #db2777 45%,
+      #a855f7 100%
+    ) !important;
+}
+
+.hero-decoration-one {
+  background:
+    rgba(255, 255, 255, 0.14) !important;
+}
+
+.hero-decoration-two {
+  background:
+    rgba(255, 220, 240, 0.18) !important;
+}
+
+.badge {
+  background:
+    rgba(255, 255, 255, 0.18) !important;
+
+  color:
+    #ffffff !important;
+
+  border:
+    1px solid
+    rgba(
+      255,
+      255,
+      255,
+      0.35
+    ) !important;
+}
+
+/* TIÊU ĐỀ */
+
+.app-title-main {
+  color:
+    #ffffff !important;
+}
+
+.app-title-vietnamese {
+  color:
+    #ffe4f1 !important;
+
+  text-shadow:
+    0 3px 15px
+    rgba(
+      118,
+      20,
+      70,
+      0.18
+    );
+}
+
+.hero-description {
+  color:
+    rgba(
+      255,
+      255,
+      255,
+      0.9
+    ) !important;
+}
+
+/* LOGO */
+
+.brand-logo {
+  background:
+    rgba(
+      255,
+      255,
+      255,
+      0.18
+    ) !important;
+
+  border:
+    1px solid
+    rgba(
+      255,
+      255,
+      255,
+      0.35
+    ) !important;
+}
+
+.brand-logo svg {
+  stroke:
+    #ffffff !important;
+}
+
+/* =====================================================
+   GIÁO VIÊN
+===================================================== */
+
+.teacher-box {
+  background:
+    rgba(
+      255,
+      255,
+      255,
+      0.15
+    ) !important;
+
+  border:
+    1px solid
+    rgba(
+      255,
+      255,
+      255,
+      0.3
+    ) !important;
+
+  box-shadow:
+    0 12px 35px
+    rgba(
+      131,
+      24,
+      67,
+      0.16
+    ) !important;
+}
+
+.teacher-avatar {
+  background:
+    #ffffff !important;
+
+  color:
+    #db2777 !important;
+}
+
+.teacher-photo {
+  border-color:
+    #ffffff !important;
+}
+
+.teacher-info small {
+  color:
+    #ffe2f0 !important;
+}
+
+.teacher-info strong {
+  color:
+    #ffffff !important;
+}
+
+.teacher-info span,
+.teacher-info p {
+  color:
+    rgba(
+      255,
+      255,
+      255,
+      0.88
+    ) !important;
+}
+
+/* =====================================================
+   THỐNG KÊ
+===================================================== */
+
+.stat-card {
+  background:
+    rgba(
+      255,
+      255,
+      255,
+      0.92
+    ) !important;
+
+  border:
+    1px solid
+    #fbcfe8 !important;
+
+  box-shadow:
+    0 10px 30px
+    rgba(
+      219,
+      39,
+      119,
+      0.08
+    ) !important;
+}
+
+.stat-card > span {
+  background:
+    linear-gradient(
+      135deg,
+      #fce7f3,
+      #f3e8ff
+    ) !important;
+}
+
+.stat-card strong {
+  color:
+    #be185d !important;
+}
+
+.stat-card small {
+  color:
+    #8a667b !important;
+}
+
+/* =====================================================
+   KHUNG TÌM KIẾM
+===================================================== */
+
+.filter-panel {
+  background:
+    rgba(
+      255,
+      255,
+      255,
+      0.94
+    ) !important;
+
+  border:
+    1px solid
+    #fbcfe8 !important;
+
+  box-shadow:
+    0 14px 38px
+    rgba(
+      219,
+      39,
+      119,
+      0.08
+    ) !important;
+}
+
+.filter-icon {
+  background:
+    linear-gradient(
+      135deg,
+      #fce7f3,
+      #f3e8ff
+    ) !important;
+}
+
+.filter-title strong {
+  color:
+    #9d174d !important;
+}
+
+.filter-title small {
+  color:
+    #8c6b7f !important;
+}
+
+.filters input,
+.filters select {
+  background:
+    #fffafd !important;
+
+  border:
+    1px solid
+    #f9a8d4 !important;
+
+  color:
+    #4a3342 !important;
+}
+
+.filters input:focus,
+.filters select:focus {
+  border-color:
+    #ec4899 !important;
+
+  box-shadow:
+    0 0 0 4px
+    rgba(
+      236,
+      72,
+      153,
+      0.12
+    ) !important;
+
+  outline:
+    none !important;
+}
+
+/* =====================================================
+   DÒNG KẾT QUẢ
+===================================================== */
+
+.summary {
+  color:
+    #831843 !important;
+}
+
+.summary strong {
+  color:
+    #db2777 !important;
+}
+
+/* =====================================================
+   THẺ ĐỀ - VẪN MỖI ĐỀ 1 MÀU
+   NHƯNG ĐỀU THEO TÔNG TRẺ TRUNG
+===================================================== */
+
+.card {
+  border:
+    1px solid
+    rgba(
+      236,
+      72,
+      153,
+      0.15
+    ) !important;
+
+  box-shadow:
+    0 12px 32px
+    rgba(
+      156,
+      39,
+      96,
+      0.09
+    ) !important;
+
+  border-radius:
+    20px !important;
+}
+
+.card:hover {
+  transform:
+    translateY(-6px);
+
+  box-shadow:
+    0 18px 45px
+    rgba(
+      190,
+      24,
+      93,
+      0.16
+    ) !important;
+}
+
+/* 1 - HỒNG BABY */
+
+.card-color-0 {
+  --accent: #ec4899;
+  --soft: #fce7f3;
+  --card-bg: #fff2f8;
+}
+
+/* 2 - TÍM HỒNG */
+
+.card-color-1 {
+  --accent: #a855f7;
+  --soft: #f3e8ff;
+  --card-bg: #faf5ff;
+}
+
+/* 3 - HỒNG ĐÀO */
+
+.card-color-2 {
+  --accent: #f472b6;
+  --soft: #fce7f3;
+  --card-bg: #fff5f9;
+}
+
+/* 4 - CAM HỒNG */
+
+.card-color-3 {
+  --accent: #fb7185;
+  --soft: #ffe4e6;
+  --card-bg: #fff5f5;
+}
+
+/* 5 - TÍM PASTEL */
+
+.card-color-4 {
+  --accent: #c084fc;
+  --soft: #f3e8ff;
+  --card-bg: #fbf7ff;
+}
+
+/* 6 - HỒNG SEN */
+
+.card-color-5 {
+  --accent: #db2777;
+  --soft: #fce7f3;
+  --card-bg: #fff0f6;
+}
+
+/* 7 - XANH HỒNG NHẸ */
+
+.card-color-6 {
+  --accent: #14b8a6;
+  --soft: #ccfbf1;
+  --card-bg: #f1fffc;
+}
+
+/* 8 - VÀNG HỒNG */
+
+.card-color-7 {
+  --accent: #f59e0b;
+  --soft: #fef3c7;
+  --card-bg: #fffaf0;
+}
+
+/* NỀN THẺ */
+
+.card {
+  background:
+    linear-gradient(
+      145deg,
+      var(--card-bg)
+      0%,
+      #ffffff
+      100%
+    ) !important;
+}
+
+/* THANH MÀU TRÊN THẺ */
+
+.card-accent {
+  background:
+    linear-gradient(
+      90deg,
+      var(--accent),
+      #f9a8d4
+    ) !important;
+}
+
+/* SỐ ĐỀ */
+
+.card-number {
+  color:
+    var(--accent) !important;
+}
+
+/* BADGE */
+
+.card .pill {
+  background:
+    var(--soft) !important;
+
+  color:
+    var(--accent) !important;
+}
+
+.card .pill.light {
+  background:
+    rgba(
+      255,
+      255,
+      255,
+      0.75
+    ) !important;
+
+  border:
+    1px solid
+    rgba(
+      236,
+      72,
+      153,
+      0.12
+    ) !important;
+}
+
+/* TÊN ĐỀ */
+
+.card h2 {
+  color:
+    #4a263d !important;
+}
+
+/* CHỦ ĐỀ */
+
+.topic {
+  color:
+    #80566f !important;
+}
+
+/* =====================================================
+   NÚT MỞ ĐỀ
+===================================================== */
+
+.card .primary {
+  background:
+    linear-gradient(
+      135deg,
+      var(--accent),
+      #db2777
+    ) !important;
+
+  color:
+    #ffffff !important;
+
+  border:
+    none !important;
+
+  box-shadow:
+    0 7px 18px
+    rgba(
+      219,
+      39,
+      119,
+      0.2
+    ) !important;
+}
+
+.card .primary:hover {
+  transform:
+    translateY(-2px);
+
+  filter:
+    brightness(1.05);
+}
+
+/* =====================================================
+   NỘI DUNG ĐỀ
+===================================================== */
+
+.detail {
+  background:
+    rgba(
+      255,
+      255,
+      255,
+      0.82
+    ) !important;
+
+  border:
+    1px solid
+    #fbcfe8 !important;
+}
+
+.detail-heading span {
+  color:
+    #db2777 !important;
+}
+
+.detail-heading h3 {
+  color:
+    #4c263e !important;
+}
+
+.detail-score {
+  background:
+    linear-gradient(
+      135deg,
+      #ec4899,
+      #a855f7
+    ) !important;
+
+  color:
+    #ffffff !important;
+}
+
+.exam-content {
+  background:
+    #ffffff !important;
+
+  border:
+    1px solid
+    #fce7f3 !important;
+
+  color:
+    #342530 !important;
+}
+
+.exam-note {
+  background:
+    linear-gradient(
+      90deg,
+      #fff1f7,
+      #faf5ff
+    ) !important;
+
+  color:
+    #9d174d !important;
+
+  border:
+    1px solid
+    #fbcfe8 !important;
+}
+
+/* =====================================================
+   THÔNG BÁO
+===================================================== */
+
+.notice {
+  background:
+    linear-gradient(
+      135deg,
+      #fff1f7,
+      #faf5ff
+    ) !important;
+
+  color:
+    #9d174d !important;
+
+  border:
+    1px solid
+    #f9a8d4 !important;
+}
+
+.notice.error {
+  background:
+    #fff1f2 !important;
+
+  color:
+    #be123c !important;
+
+  border-color:
+    #fecdd3 !important;
+}
+
+/* =====================================================
+   FOOTER
+===================================================== */
+
+footer {
+  background:
+    linear-gradient(
+      135deg,
+      #831843,
+      #be185d,
+      #7e22ce
+    ) !important;
+
+  color:
+    #ffffff !important;
+}
+
+footer strong,
+footer span {
+  color:
+    #ffffff !important;
+}
+
+/* =====================================================
+   ĐIỆN THOẠI
+===================================================== */
+
+@media (max-width: 700px) {
+  .hero {
+    background:
+      linear-gradient(
+        155deg,
+        #ec4899,
+        #be185d,
+        #9333ea
+      ) !important;
+  }
+
+  .card {
+    border-radius:
+      17px !important;
+  }
+}
