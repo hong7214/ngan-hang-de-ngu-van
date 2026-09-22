@@ -781,3 +781,152 @@ body {
     white-space: normal;
   }
 }
+/* ==========================================
+   TIÊU ĐỀ APP - 2 DÒNG ĐẸP
+========================================== */
+
+.app-title {
+  margin: 12px 0 16px !important;
+  line-height: 1.05 !important;
+  letter-spacing: -0.035em;
+}
+
+.app-title-main {
+  display: block;
+  color: #ffffff !important;
+  font-size: clamp(38px, 4vw, 58px);
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.app-title-vietnamese {
+  display: block;
+  margin-top: 8px;
+  color: #ffe29a !important;
+  font-size: clamp(43px, 4.5vw, 64px);
+  font-weight: 850;
+  letter-spacing: -0.03em;
+}
+
+/* ==========================================
+   THÔNG TIN GIÁO VIÊN
+========================================== */
+
+.teacher-box {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.teacher-photo,
+.teacher-avatar {
+  flex: 0 0 auto;
+  width: 82px;
+  height: 82px;
+  border-radius: 50%;
+}
+
+.teacher-photo {
+  object-fit: cover;
+  object-position: center;
+  border: 4px solid rgba(255, 255, 255, 0.95);
+  box-shadow:
+    0 8px 24px rgba(0, 0, 0, 0.18);
+}
+
+.teacher-avatar {
+  display: grid;
+  place-items: center;
+  background: #ffffff;
+  color: #266b9d;
+  font-size: 22px;
+  font-weight: 900;
+  border: 4px solid rgba(255, 255, 255, 0.65);
+}
+
+.teacher-info {
+  min-width: 0;
+}
+
+.teacher-info small {
+  display: block;
+  margin-bottom: 5px;
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  color: #d7efff;
+}
+
+.teacher-info strong {
+  display: block;
+  font-size: 19px;
+  line-height: 1.35;
+  color: #ffffff;
+}
+
+.teacher-info span {
+  display: block;
+  margin-top: 3px;
+  font-size: 13px;
+  line-height: 1.4;
+  color: rgba(255, 255, 255, 0.82);
+}
+
+.teacher-info p {
+  margin: 8px 0 0;
+  font-size: 13px;
+  line-height: 1.55;
+  color: rgba(255, 255, 255, 0.88);
+}
+
+/* ==========================================
+   FONT CHUNG
+========================================== */
+
+body {
+  font-family:
+    "Segoe UI",
+    "Roboto",
+    "Helvetica Neue",
+    Arial,
+    sans-serif;
+}
+
+.card h2 {
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+/* ==========================================
+   ĐIỆN THOẠI / MÀN HÌNH NHỎ
+========================================== */
+
+@media (max-width: 850px) {
+  .app-title-main {
+    white-space: normal;
+  }
+
+  .app-title {
+    line-height: 1.08 !important;
+  }
+
+  .teacher-photo,
+  .teacher-avatar {
+    width: 68px;
+    height: 68px;
+  }
+}
+
+@media (max-width: 600px) {
+  .app-title-main {
+    font-size: 34px;
+  }
+
+  .app-title-vietnamese {
+    font-size: 40px;
+  }
+
+  .teacher-box {
+    align-items: flex-start;
+  }
+}
