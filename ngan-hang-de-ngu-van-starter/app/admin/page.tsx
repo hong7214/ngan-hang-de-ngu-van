@@ -20,6 +20,8 @@ type DeNguVan = {
   muc_do: string | null;
   file_url: string | null;
   cong_khai: boolean;
+  da_giao: boolean;
+lan_giao_cuoi: string | null;
 };
 
 type FormData = {
@@ -470,8 +472,45 @@ async function doiTrangThaiHangLoat(
   setDeDaChon([]);
   await taiDanhSach();
 }
+async function saoChepLinkGiaoBai(
+  item: DeNguVan
+) {
+  if (!item.cong_khai) {
+    setThongBao(
+      "Đề này đang ẩn. Cô cần công khai đề trước khi gửi link cho học sinh."
+    );
+    return;
+  }
 
-async function xoaHangLoat() {
+  const link =
+    `https://hong7214.github.io/ngan-hang-de-ngu-van/?de=${item.id}`;
+
+  try {
+    await navigator.clipboard.writeText(link);
+
+    await supabase
+      .from("de_ngu_van")
+      .update({
+        da_giao: true,
+        lan_giao_cuoi:
+          new Date().toISOString(),
+        updated_at:
+          new Date().toISOString(),
+      })
+      .eq("id", item.id);
+
+    setThongBao(
+      `✓ Đã sao chép link "${item.tieu_de}". Đề cũng đã được đánh dấu ĐÃ GIAO.`
+    );
+
+    await taiDanhSach();
+  } catch {
+    setThongBao(
+      "Không sao chép được link. Cô thử lại."
+    );
+  }
+}
+async function xoaHangLoat() 
   if (!deDaChon.length) {
     setThongBao(
       "Cô chưa chọn đề nào."
@@ -504,6 +543,73 @@ async function xoaHangLoat() {
   );
 
   setDeDaChon([]);
+  await taiDanhSach();
+}
+  async function doiDaGiao(item: DeNguVan) {
+  const trangThaiMoi = !item.da_giao;
+
+  const { error } = await supabase
+    .from("de_ngu_van")
+    .update({
+      da_giao: trangThaiMoi,
+      lan_giao_cuoi: trangThaiMoi
+        ? new Date().toISOString()
+        : null,
+      updated_at: new Date().toISOString(),
+    })
+    .eq("id", item.id);
+
+  if (error) {
+    setThongBao(
+      "Không đổi được trạng thái giao bài: " +
+        error.message
+    );
+    return;
+  }
+
+  setThongBao(
+    trangThaiMoi
+      ? `✓ Đã đánh dấu "${item.tieu_de}" là đã giao.`
+      : `Đã chuyển "${item.tieu_de}" về chưa giao.`
+  );
+async function saoChepLinkGiaoBai(
+  item: DeNguVan
+) {
+  if (!item.cong_khai) {
+    setThongBao(
+      "Đề này đang ẩn. Cô cần công khai đề trước khi gửi link cho học sinh."
+    );
+    return;
+  }
+
+  const link =
+    `https://hong7214.github.io/ngan-hang-de-ngu-van/?de=${item.id}`;
+
+  try {
+    await navigator.clipboard.writeText(link);
+
+    await supabase
+      .from("de_ngu_van")
+      .update({
+        da_giao: true,
+        lan_giao_cuoi:
+          new Date().toISOString(),
+        updated_at:
+          new Date().toISOString(),
+      })
+      .eq("id", item.id);
+
+    setThongBao(
+      `✓ Đã sao chép link "${item.tieu_de}". Đề cũng đã được đánh dấu ĐÃ GIAO.`
+    );
+
+    await taiDanhSach();
+  } catch {
+    setThongBao(
+      "Không sao chép được link. Cô thử lại."
+    );
+  }
+}
   await taiDanhSach();
 }
   const danhSachLoc = danhSach.filter(
@@ -1110,8 +1216,9 @@ async function xoaHangLoat() {
   <th>Đề</th>
                   <th>Lớp</th>
                   <th>Thể loại</th>
-                  <th>Trạng thái</th>
-                  <th>Thao tác</th>
+               <th>Trạng thái</th>
+<th>Giao bài</th>
+<th>Thao tác</th>
                 </tr>
               </thead>
 
@@ -1171,7 +1278,35 @@ async function xoaHangLoat() {
                             : "Đang ẩn"}
                         </button>
                       </td>
+<td>
+  <div className={styles.assignActions}>
 
+    <button
+      onClick={() =>
+        doiDaGiao(item)
+      }
+      className={
+        item.da_giao
+          ? styles.assigned
+          : styles.notAssigned
+      }
+    >
+      {item.da_giao
+        ? "✓ Đã giao"
+        : "Chưa giao"}
+    </button>
+
+    <button
+      onClick={() =>
+        saoChepLinkGiaoBai(item)
+      }
+      className={styles.copyLink}
+    >
+      🔗 Lấy link
+    </button>
+
+  </div>
+</td>
                       <td>
                         <div
                           className={
