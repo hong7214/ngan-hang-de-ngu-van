@@ -1334,3 +1334,27 @@ main {
     font-size: 20px !important;
   }
 }
+/* THU NHỎ TIÊU ĐỀ ĐẦU TRANG */
+
+.app-title-main {
+  font-size: clamp(30px, 3.2vw, 46px) !important;
+  line-height: 1.08 !important;
+}
+
+.app-title-vietnamese {
+  font-size: clamp(34px, 3.6vw, 50px) !important;
+  line-height: 1.08 !important;
+  margin-top: 6px !important;
+}
+
+/* Điện thoại */
+
+@media (max-width: 700px) {
+  .app-title-main {
+    font-size: 28px !important;
+  }
+
+  .app-title-vietnamese {
+    font-size: 32px !important;
+  }
+}
