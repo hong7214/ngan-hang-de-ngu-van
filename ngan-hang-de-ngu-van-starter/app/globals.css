@@ -1358,3 +1358,141 @@ main {
     font-size: 32px !important;
   }
 }
+/* ==================================================
+   THU NHỎ TOÀN BỘ PHẦN ĐẦU TRANG
+   TÊN APP + THÔNG TIN / ẢNH GIÁO VIÊN
+================================================== */
+
+/* Giảm chiều cao vùng đầu trang */
+.hero {
+  padding-top: 24px !important;
+  padding-bottom: 28px !important;
+}
+
+/* Hai khối tên app và GV nằm cân đối hơn */
+.hero-inner {
+  align-items: center !important;
+  gap: 24px !important;
+}
+
+/* Thu nhỏ logo sách */
+.brand-logo {
+  width: 52px !important;
+  height: 52px !important;
+  min-width: 52px !important;
+}
+
+/* Thu nhỏ nhãn NGỮ VĂN THCS */
+.badge {
+  padding: 6px 12px !important;
+  font-size: 11px !important;
+  margin-bottom: 8px !important;
+}
+
+/* Thu nhỏ tên app */
+.app-title {
+  margin: 4px 0 8px !important;
+}
+
+.app-title-main {
+  font-size: clamp(28px, 3vw, 42px) !important;
+  line-height: 1.05 !important;
+}
+
+.app-title-vietnamese {
+  font-size: clamp(30px, 3.2vw, 44px) !important;
+  line-height: 1.05 !important;
+  margin-top: 3px !important;
+}
+
+/* Thu nhỏ dòng giới thiệu */
+.hero-description {
+  margin-top: 8px !important;
+  font-size: 14px !important;
+  line-height: 1.5 !important;
+  max-width: 650px !important;
+}
+
+/* ==================================================
+   THU NHỎ KHUNG GIÁO VIÊN
+================================================== */
+
+.teacher-box {
+  padding: 14px 16px !important;
+  gap: 12px !important;
+
+  max-width: 390px !important;
+
+  border-radius: 18px !important;
+}
+
+/* Thu nhỏ ảnh GV */
+.teacher-photo,
+.teacher-avatar {
+  width: 60px !important;
+  height: 60px !important;
+
+  min-width: 60px !important;
+}
+
+/* Nếu chưa có ảnh, chữ GV nhỏ lại */
+.teacher-avatar {
+  font-size: 17px !important;
+}
+
+/* Nhãn giáo viên phụ trách */
+.teacher-info small {
+  font-size: 9px !important;
+  margin-bottom: 2px !important;
+}
+
+/* Tên GV */
+.teacher-info strong {
+  font-size: 16px !important;
+  line-height: 1.25 !important;
+}
+
+/* Trường / đơn vị */
+.teacher-info span {
+  font-size: 12px !important;
+  margin-top: 2px !important;
+}
+
+/* Lời nhắn */
+.teacher-info p {
+  font-size: 12px !important;
+  line-height: 1.4 !important;
+  margin-top: 5px !important;
+}
+
+/* ==================================================
+   ĐIỆN THOẠI
+================================================== */
+
+@media (max-width: 700px) {
+
+  .hero {
+    padding-top: 18px !important;
+    padding-bottom: 22px !important;
+  }
+
+  .app-title-main {
+    font-size: 25px !important;
+  }
+
+  .app-title-vietnamese {
+    font-size: 28px !important;
+  }
+
+  .teacher-box {
+    padding: 12px 14px !important;
+  }
+
+  .teacher-photo,
+  .teacher-avatar {
+    width: 52px !important;
+    height: 52px !important;
+
+    min-width: 52px !important;
+  }
+}
