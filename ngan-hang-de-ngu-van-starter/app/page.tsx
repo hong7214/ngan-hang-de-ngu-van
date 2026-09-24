@@ -1,11 +1,6 @@
 "use client";
 
-import {
-  useEffect,
-  useMemo,
-  useState,
-} from "react";
-
+import { useEffect, useMemo, useState } from "react";
 import { supabase } from "../lib/supabase";
 
 type DeNguVan = {
@@ -26,13 +21,6 @@ type DeNguVan = {
   cong_khai: boolean | null;
 };
 
-type SiteSettings = {
-  teacher_name: string;
-  teacher_school: string;
-  teacher_message: string;
-  teacher_photo_url: string | null;
-};
-
 const THE_LOAI_THO = [
   "Thơ 4 chữ",
   "Thơ 5 chữ",
@@ -43,336 +31,46 @@ const THE_LOAI_THO = [
   "Song thất lục bát",
   "Thơ tự do",
   "Thơ Đường luật",
+  "Thơ khác",
 ];
 
-/* ==========================================
-   HÀM XỬ LÝ NỘI DUNG ĐỀ
-   Chỉ hiển thị đề cho học sinh.
-   Không hiển thị đáp án / hướng dẫn chấm.
-========================================== */
-
-function khongDau(text: string) {
-  return text
-    .normalize("NFD")
-    .replace(
-      /[\u0300-\u036f]/g,
-      ""
-    )
-    .replace(/Đ/g, "D")
-    .replace(/đ/g, "d")
-    .toUpperCase()
-    .trim()
-    .replace(/\s+/g, " ");
+function taoMauThe(id: number) {
+  const mau = [
+    "card-pink",
+    "card-purple",
+    "card-blue",
+    "card-peach",
+    "card-green",
+  ];
+  return mau[id % mau.length];
 }
-
-function laBatDauPhanI(
-  line: string
-) {
-  const s = khongDau(line)
-    .replace(/[–—]/g, "-")
-    .replace(/\s+/g, " ")
-    .trim();
-
-  return (
-    /^I\s*[\.\):\-]?\s*PHAN\s+DOC\b/.test(
-      s
-    ) ||
-    /^I\s*[\.\):\-]?\s*DOC\b/.test(
-      s
-    ) ||
-    /^PHAN\s+I\s*[\.\):\-]?\s*(PHAN\s+)?DOC\b/.test(
-      s
-    ) ||
-    /^PHAN\s+DOC\s*[- ]*HIEU\b/.test(
-      s
-    )
-  );
-}
-
-function laDongBatDauNguLieu(
-  line: string
-) {
-  const s = khongDau(line);
-
-  return (
-    /^DOC\s+(VAN BAN|BAI THO|DOAN THO|DOAN TRICH|NGU LIEU)/.test(
-      s
-    ) ||
-    /^DOC\s+HIEU\b/.test(s)
-  );
-}
-
-function laMocKetThuc(
-  line: string
-) {
-  const s = khongDau(line)
-    .replace(/[–—]/g, "-")
-    .trim();
-
-  return (
-    /^-*\s*HUONG DAN CHAM/.test(
-      s
-    ) ||
-    /^-*\s*DAP AN/.test(s) ||
-    /^-*\s*GOI Y DAP AN/.test(
-      s
-    ) ||
-    /^-*\s*DAP AN THAM KHAO/.test(
-      s
-    ) ||
-    /^-*\s*MA TRAN/.test(s) ||
-    /^-*\s*BANG DAC TA/.test(
-      s
-    ) ||
-    /^-*\s*DAC TA DE/.test(
-      s
-    ) ||
-    /^-*\s*HET\b/.test(s) ||
-    /^PHAN\s+III\b/.test(s) ||
-    /^III\s*[\.\):\-]/.test(
-      s
-    )
-  );
-}
-
-function layNoiDungHocSinh(
-  item: DeNguVan
-) {
-  const raw =
-    `${item.ngu_lieu ?? ""}
-
-${item.cau_hoi ?? ""}`
-      .replace(/\r/g, "")
-      .trim();
-
-  if (!raw) {
-    return "";
-  }
-
-  const lines =
-    raw.split("\n");
-
-  let startIndex =
-    lines.findIndex((line) =>
-      laBatDauPhanI(line)
-    );
-
-  let canThemTieuDePhanI =
-    false;
-
-  if (startIndex === -1) {
-    startIndex =
-      lines.findIndex(
-        (line) =>
-          laDongBatDauNguLieu(
-            line
-          )
-      );
-
-    if (startIndex !== -1) {
-      canThemTieuDePhanI =
-        true;
-    }
-  }
-
-  if (startIndex === -1) {
-    startIndex = 0;
-    canThemTieuDePhanI =
-      true;
-  }
-
-  const ketQua: string[] =
-    [];
-
-  if (canThemTieuDePhanI) {
-    ketQua.push(
-      "I. PHẦN ĐỌC HIỂU"
-    );
-    ketQua.push("");
-  }
-
-  for (
-    let i = startIndex;
-    i < lines.length;
-    i++
-  ) {
-    const line =
-      lines[i];
-
-    if (
-      i > startIndex &&
-      laMocKetThuc(line)
-    ) {
-      break;
-    }
-
-    const dong =
-      khongDau(line);
-
-    if (
-      /^MA DE\s*[:\-]/.test(
-        dong
-      ) ||
-      /^MA DE$/.test(dong)
-    ) {
-      continue;
-    }
-
-    ketQua.push(line);
-  }
-
-  return ketQua
-    .join("\n")
-    .replace(
-      /\n{3,}/g,
-      "\n\n"
-    )
-    .trim();
-}
-
-/* ==========================================
-   TRANG HỌC SINH
-========================================== */
 
 export default function Home() {
-  const [de, setDe] =
-    useState<DeNguVan[]>(
-      []
-    );
+  const [de, setDe] = useState<DeNguVan[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
-  const [
-    loading,
-    setLoading,
-  ] = useState(true);
+  const [tuKhoa, setTuKhoa] = useState("");
+  const [lop, setLop] = useState("Tất cả");
+  const [nhom, setNhom] = useState("Tất cả");
+  const [theLoai, setTheLoai] = useState("Tất cả");
 
-  const [error, setError] =
-    useState("");
-
-  const [
-    thongTinGV,
-    setThongTinGV,
-  ] =
-    useState<SiteSettings>({
-      teacher_name:
-        "Giáo viên Ngữ văn",
-
-      teacher_school:
-        "THCS",
-
-      teacher_message:
-        "Chúc các em học tốt và tiến bộ mỗi ngày.",
-
-      teacher_photo_url:
-        null,
-    });
-
-  const [
-    tuKhoa,
-    setTuKhoa,
-  ] = useState("");
-
-  const [lop, setLop] =
-    useState("Tất cả");
-
-  const [nhom, setNhom] =
-    useState("Tất cả");
-
-  const [
-    theLoai,
-    setTheLoai,
-  ] = useState("Tất cả");
-
-  const [
-    dangMo,
-    setDangMo,
-  ] =
-    useState<number | null>(
-      null
-    );
-
-  /*
-    Nếu học sinh mở link:
-    ?de=36
-
-    thì deDuocGiao = 36.
-  */
-
-  const [
-    deDuocGiao,
-    setDeDuocGiao,
-  ] =
-    useState<number | null>(
-      null
-    );
-
-  /* ==========================================
-     ĐỌC MÃ ĐỀ TỪ LINK GIAO BÀI
-  ========================================== */
-
-  useEffect(() => {
-    const params =
-      new URLSearchParams(
-        window.location.search
-      );
-
-    const maDe =
-      params.get("de");
-
-    if (!maDe) {
-      return;
-    }
-
-    const id =
-      Number(maDe);
-
-    if (
-      Number.isInteger(id) &&
-      id > 0
-    ) {
-      setDeDuocGiao(id);
-
-      /*
-        Tự động mở đề
-        khi học sinh vào link.
-      */
-      setDangMo(id);
-    }
-  }, []);
-
-  /* ==========================================
-     TẢI DANH SÁCH ĐỀ CÔNG KHAI
-  ========================================== */
+  const [deDangMo, setDeDangMo] = useState<DeNguVan | null>(null);
 
   useEffect(() => {
     async function taiDe() {
       setLoading(true);
 
-      const {
-        data,
-        error,
-      } = await supabase
+      const { data, error } = await supabase
         .from("de_ngu_van")
         .select("*")
-        .eq(
-          "cong_khai",
-          true
-        )
-        .order(
-          "created_at",
-          {
-            ascending:
-              false,
-          }
-        );
+        .eq("cong_khai", true)
+        .order("created_at", { ascending: false });
 
       if (error) {
-        setError(
-          error.message
-        );
+        setError(error.message);
       } else {
-        setDe(
-          (data ?? []) as DeNguVan[]
-        );
+        setDe((data ?? []) as DeNguVan[]);
       }
 
       setLoading(false);
@@ -381,781 +79,246 @@ export default function Home() {
     taiDe();
   }, []);
 
-  /* ==========================================
-     TẢI THÔNG TIN GIÁO VIÊN
-  ========================================== */
-
   useEffect(() => {
-    async function taiThongTinGV() {
-      const {
-        data,
-        error,
-      } = await supabase
-        .from(
-          "site_settings"
-        )
-        .select(
-          "teacher_name, teacher_school, teacher_message, teacher_photo_url"
-        )
-        .eq("id", 1)
-        .single();
-
-      if (error) {
-        console.error(
-          "Không tải được thông tin giáo viên:",
-          error.message
-        );
-
-        return;
-      }
-
-      if (data) {
-        setThongTinGV({
-          teacher_name:
-            data.teacher_name ??
-            "Giáo viên Ngữ văn",
-
-          teacher_school:
-            data.teacher_school ??
-            "THCS",
-
-          teacher_message:
-            data.teacher_message ??
-            "Chúc các em học tốt và tiến bộ mỗi ngày.",
-
-          teacher_photo_url:
-            data.teacher_photo_url ??
-            null,
-        });
-      }
+    if (deDangMo) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
     }
 
-    taiThongTinGV();
-  }, []);
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [deDangMo]);
 
-  /* ==========================================
-     LỌC DANH SÁCH
-  ========================================== */
+  const danhSach = useMemo(() => {
+    const q = tuKhoa.trim().toLowerCase();
 
-  const danhSach =
-    useMemo(() => {
-      const q =
-        tuKhoa
-          .trim()
-          .toLowerCase();
+    return de.filter((item) => {
+      const hop =
+        `${item.tieu_de ?? ""} ${item.chu_de ?? ""} ${item.ngu_lieu ?? ""} ${item.the_loai ?? ""} ${item.nhom ?? ""}`.toLowerCase();
 
-      return de.filter(
-        (item) => {
-          /*
-            Nếu có link giao bài
-            thì chỉ cho phép đúng ID đó.
-          */
-
-          if (
-            deDuocGiao !==
-              null &&
-            item.id !==
-              deDuocGiao
-          ) {
-            return false;
-          }
-
-          const hop =
-            `${item.tieu_de ?? ""} ` +
-            `${item.chu_de ?? ""} ` +
-            `${item.ngu_lieu ?? ""} ` +
-            `${item.the_loai ?? ""}`;
-
-          return (
-            (!q ||
-              hop
-                .toLowerCase()
-                .includes(q)) &&
-            (lop ===
-              "Tất cả" ||
-              item.lop ===
-                lop) &&
-            (nhom ===
-              "Tất cả" ||
-              item.nhom ===
-                nhom) &&
-            (theLoai ===
-              "Tất cả" ||
-              item.the_loai ===
-                theLoai)
-          );
-        }
+      return (
+        (!q || hop.includes(q)) &&
+        (lop === "Tất cả" || item.lop === lop) &&
+        (nhom === "Tất cả" || item.nhom === nhom) &&
+        (theLoai === "Tất cả" || item.the_loai === theLoai)
       );
-    }, [
-      de,
-      tuKhoa,
-      lop,
-      nhom,
-      theLoai,
-      deDuocGiao,
-    ]);
+    });
+  }, [de, tuKhoa, lop, nhom, theLoai]);
 
   return (
     <main>
-      {/* ======================================
-          ĐẦU TRANG
-      ====================================== */}
+      <header className="hero">
+        <div className="hero-inner">
+          <div className="hero-left">
+            <div className="badge">NGỮ VĂN THCS</div>
 
-      <header
-        className="hero"
-      >
-        <div
-          className="hero-decoration hero-decoration-one"
-        />
+            <h1 className="app-title">
+              <span className="app-title-main">Ngân hàng đề tự luận</span>
+              <span className="app-title-vietnamese">Ngữ văn</span>
+            </h1>
 
-        <div
-          className="hero-decoration hero-decoration-two"
-        />
-
-        <div
-          className="hero-inner"
-        >
-          <div
-            className="brand-wrap"
-          >
-            <div
-              className="brand-logo"
-            >
-              <svg
-                viewBox="0 0 64 64"
-                aria-hidden="true"
-              >
-                <path d="M10 13c9-3 16-1 22 5v36c-6-6-13-8-22-5V13Z" />
-
-                <path d="M54 13c-9-3-16-1-22 5v36c6-6 13-8 22-5V13Z" />
-
-                <path d="M32 18v36" />
-              </svg>
-            </div>
-
-            <div>
-              <div
-                className="badge"
-              >
-                NGỮ VĂN THCS
-              </div>
-
-              <h1
-                className="app-title"
-              >
-                <span
-                  className="app-title-main"
-                >
-                  Ngân hàng đề tự luận
-                </span>
-
-                <span
-                  className="app-title-vietnamese"
-                >
-                  Ngữ văn
-                </span>
-              </h1>
-
-              <p
-                className="hero-description"
-              >
-                {deDuocGiao !==
-                null
-                  ? "Đề luyện tập được giáo viên giao cho học sinh."
-                  : "Học liệu được sắp xếp theo lớp, dạng bài và thể loại để học sinh dễ dàng luyện tập."}
-              </p>
-            </div>
+            <p className="hero-desc">
+              Học liệu được sắp xếp theo lớp, dạng bài và thể loại để học sinh dễ dàng luyện tập.
+            </p>
           </div>
 
-          {/* THÔNG TIN GV */}
-
-          <div
-            className="teacher-box"
-          >
-            {thongTinGV.teacher_photo_url ? (
-              <img
-                className="teacher-photo"
-                src={
-                  thongTinGV.teacher_photo_url
-                }
-                alt="Ảnh giáo viên phụ trách"
-              />
-            ) : (
-              <div
-                className="teacher-avatar"
-              >
-                GV
+          <div className="teacher-box">
+            <div className="teacher-avatar">GV</div>
+            <div className="teacher-content">
+              <div className="teacher-label">GIÁO VIÊN PHỤ TRÁCH</div>
+              <div className="teacher-name">TRẦN THỊ NGUYỆT HỒNG</div>
+              <div className="teacher-school">
+                Giáo viên Ngữ văn - Trường THCS Long Cang, Tây Ninh
               </div>
-            )}
-
-            <div
-              className="teacher-info"
-            >
-              <small>
-                GIÁO VIÊN PHỤ TRÁCH
-              </small>
-
-              <strong>
-                {
-                  thongTinGV.teacher_name
-                }
-              </strong>
-
-              <span>
-                {
-                  thongTinGV.teacher_school
-                }
-              </span>
-
-              <p>
-                {
-                  thongTinGV.teacher_message
-                }
-              </p>
+              <div className="teacher-note">
+                Chúc các em học tốt, tự tin và tiến bộ mỗi ngày.
+              </div>
             </div>
           </div>
         </div>
       </header>
 
-      <section
-        className="container"
-      >
-        {/* ======================================
-            THỐNG KÊ
-        ====================================== */}
-
-        {deDuocGiao ===
-          null && (
-          <div
-            className="stats-row"
-          >
-            <div
-              className="stat-card"
-            >
-              <span>
-                📚
-              </span>
-
-              <div>
-                <strong>
-                  {de.length}
-                </strong>
-
-                <small>
-                  Đề đang công khai
-                </small>
-              </div>
-            </div>
-
-            <div
-              className="stat-card"
-            >
-              <span>
-                🎓
-              </span>
-
-              <div>
-                <strong>
-                  6–9
-                </strong>
-
-                <small>
-                  Khối THCS
-                </small>
-              </div>
-            </div>
-
-            <div
-              className="stat-card"
-            >
-              <span>
-                ✍️
-              </span>
-
-              <div>
-                <strong>
-                  Nhiều dạng
-                </strong>
-
-                <small>
-                  Đọc hiểu & viết
-                </small>
-              </div>
-            </div>
+      <section className="stats-wrap">
+        <div className="stat-card">
+          <div className="stat-icon">📚</div>
+          <div>
+            <strong>{de.length}</strong>
+            <span>Đề đang công khai</span>
           </div>
-        )}
+        </div>
 
-        {/* ======================================
-            THÔNG BÁO ĐỀ ĐƯỢC GIAO
-        ====================================== */}
-
-        {deDuocGiao !==
-          null && (
-          <div
-            className="notice"
-          >
-            📌{" "}
-            <strong>
-              Bài tập được giáo viên giao
-            </strong>
-            {" — "}
-            Em hãy đọc kỹ đề và hoàn thành bài theo yêu cầu.
+        <div className="stat-card">
+          <div className="stat-icon">🎓</div>
+          <div>
+            <strong>6–9</strong>
+            <span>Khối THCS</span>
           </div>
-        )}
+        </div>
 
-        {/* ======================================
-            BỘ LỌC
-            Chỉ hiện khi vào ngân hàng bình thường.
-            Khi mở link giao bài thì ẩn.
-        ====================================== */}
-
-        {deDuocGiao ===
-          null && (
-          <div
-            className="filter-panel"
-          >
-            <div
-              className="filter-title"
-            >
-              <div>
-                <span
-                  className="filter-icon"
-                >
-                  🔎
-                </span>
-
-                <div>
-                  <strong>
-                    Tìm đề luyện tập
-                  </strong>
-
-                  <small>
-                    Chọn nội dung phù hợp với em
-                  </small>
-                </div>
-              </div>
-            </div>
-
-            <div
-              className="filters"
-            >
-              <input
-                value={
-                  tuKhoa
-                }
-                onChange={(
-                  e
-                ) =>
-                  setTuKhoa(
-                    e.target.value
-                  )
-                }
-                placeholder="Tìm tên đề, chủ đề, ngữ liệu..."
-              />
-
-              <select
-                value={lop}
-                onChange={(
-                  e
-                ) =>
-                  setLop(
-                    e.target.value
-                  )
-                }
-              >
-                <option>
-                  Tất cả
-                </option>
-
-                <option>
-                  6
-                </option>
-
-                <option>
-                  7
-                </option>
-
-                <option>
-                  8
-                </option>
-
-                <option>
-                  9
-                </option>
-              </select>
-
-              <select
-                value={nhom}
-                onChange={(
-                  e
-                ) =>
-                  setNhom(
-                    e.target.value
-                  )
-                }
-              >
-                <option>
-                  Tất cả
-                </option>
-
-                <option>
-                  Thơ
-                </option>
-
-                <option>
-                  Truyện
-                </option>
-
-                <option>
-                  Nghị luận xã hội
-                </option>
-
-                <option>
-                  Nghị luận văn học
-                </option>
-
-                <option>
-                  Viết đoạn văn
-                </option>
-
-                <option>
-                  Đề tổng hợp
-                </option>
-              </select>
-
-              <select
-                value={
-                  theLoai
-                }
-                onChange={(
-                  e
-                ) =>
-                  setTheLoai(
-                    e.target.value
-                  )
-                }
-              >
-                <option>
-                  Tất cả
-                </option>
-
-                {THE_LOAI_THO.map(
-                  (x) => (
-                    <option
-                      key={
-                        x
-                      }
-                    >
-                      {x}
-                    </option>
-                  )
-                )}
-              </select>
-            </div>
+        <div className="stat-card">
+          <div className="stat-icon">✍️</div>
+          <div>
+            <strong>Nhiều dạng</strong>
+            <span>Đọc hiểu & viết</span>
           </div>
-        )}
-
-        {/* ======================================
-            KẾT QUẢ
-        ====================================== */}
-
-        {!loading &&
-          !error &&
-          deDuocGiao ===
-            null && (
-            <div
-              className="summary"
-            >
-              <span>
-                ✨
-              </span>
-
-              Tìm thấy{" "}
-              <strong>
-                {
-                  danhSach.length
-                }
-              </strong>{" "}
-              đề phù hợp
-            </div>
-          )}
-
-        {loading && (
-          <div
-            className="notice"
-          >
-            Đang tải ngân hàng đề...
-          </div>
-        )}
-
-        {error && (
-          <div
-            className="notice error"
-          >
-            Không tải được dữ liệu:{" "}
-            {error}
-          </div>
-        )}
-
-        {/* Nếu link không tồn tại hoặc đề đang ẩn */}
-
-        {!loading &&
-          !error &&
-          deDuocGiao !==
-            null &&
-          danhSach.length ===
-            0 && (
-            <div
-              className="notice error"
-            >
-              Đề được giao hiện không tồn tại hoặc giáo viên chưa công khai đề này.
-            </div>
-          )}
-
-        {/* Trường hợp tìm kiếm bình thường */}
-
-        {!loading &&
-          !error &&
-          deDuocGiao ===
-            null &&
-          danhSach.length ===
-            0 && (
-            <div
-              className="notice"
-            >
-              Chưa có đề phù hợp với bộ lọc hiện tại.
-            </div>
-          )}
-
-        {/* ======================================
-            DANH SÁCH ĐỀ
-        ====================================== */}
-
-        <div
-          className="grid"
-        >
-          {danhSach.map(
-            (item) => {
-              const noiDung =
-                layNoiDungHocSinh(
-                  item
-                );
-
-              /*
-                8 màu nền luân phiên.
-              */
-              const mau =
-                item.id % 8;
-
-              return (
-                <article
-                  className={`card card-color-${mau}`}
-                  key={
-                    item.id
-                  }
-                >
-                  <div
-                    className="card-accent"
-                  />
-
-                  <div
-                    className="card-number"
-                  >
-                    ĐỀ{" "}
-                    {String(
-                      item.id
-                    ).padStart(
-                      2,
-                      "0"
-                    )}
-                  </div>
-
-                  <div
-                    className="card-top"
-                  >
-                    <span
-                      className="pill"
-                    >
-                      🎓 Lớp{" "}
-                      {item.lop ||
-                        "—"}
-                    </span>
-
-                    <span
-                      className="pill light"
-                    >
-                      📖{" "}
-                      {item.the_loai ||
-                        item.nhom ||
-                        "Ngữ văn"}
-                    </span>
-                  </div>
-
-                  <h2>
-                    {
-                      item.tieu_de
-                    }
-                  </h2>
-
-                  <p
-                    className="meta"
-                  >
-                    <span>
-                      ✍️{" "}
-                      {item.dang_bai ||
-                        "Tự luận"}
-                    </span>
-
-                    {item.thoi_gian && (
-                      <span>
-                        ⏱{" "}
-                        {
-                          item.thoi_gian
-                        }{" "}
-                        phút
-                      </span>
-                    )}
-
-                    {item.so_diem && (
-                      <span>
-                        ⭐{" "}
-                        {
-                          item.so_diem
-                        }{" "}
-                        điểm
-                      </span>
-                    )}
-                  </p>
-
-                  {item.chu_de && (
-                    <p
-                      className="topic"
-                    >
-                      Chủ đề:{" "}
-                      {
-                        item.chu_de
-                      }
-                    </p>
-                  )}
-
-                  {/* Khi là link giao bài,
-                      đề đã tự mở.
-                      Học sinh vẫn có thể
-                      thu gọn / mở lại. */}
-
-                  <button
-                    className="primary"
-                    onClick={() =>
-                      setDangMo(
-                        dangMo ===
-                          item.id
-                          ? null
-                          : item.id
-                      )
-                    }
-                  >
-                    {dangMo ===
-                    item.id
-                      ? "Thu gọn đề ▲"
-                      : "Mở đề luyện tập →"}
-                  </button>
-
-                  {dangMo ===
-                    item.id && (
-                    <div
-                      className="detail"
-                    >
-                      {noiDung ? (
-                        <>
-                          <div
-                            className="detail-heading"
-                          >
-                            <div>
-                              <span>
-                                ĐỀ LUYỆN TẬP
-                              </span>
-
-                              <h3>
-                                {
-                                  item.tieu_de
-                                }
-                              </h3>
-                            </div>
-
-                            <div
-                              className="detail-score"
-                            >
-                              {item.so_diem ||
-                                10}
-
-                              <small>
-                                điểm
-                              </small>
-                            </div>
-                          </div>
-
-                          <div
-                            className="exam-content"
-                          >
-                            {
-                              noiDung
-                            }
-                          </div>
-
-                          <div
-                            className="exam-note"
-                          >
-                            🌱 Chúc em làm bài bình tĩnh, tự tin và đạt kết quả tốt!
-                          </div>
-                        </>
-                      ) : (
-                        <div
-                          className="notice"
-                        >
-                          Đề đang được giáo viên kiểm tra lại nội dung.
-                        </div>
-                      )}
-                    </div>
-                  )}
-                </article>
-              );
-            }
-          )}
         </div>
       </section>
 
-      {/* ======================================
-          CHÂN TRANG
-      ====================================== */}
+      <section className="container">
+        <div className="filter-box">
+          <div className="filter-title">
+            <div className="filter-icon">🔎</div>
+            <div>
+              <h2>Tìm đề luyện tập</h2>
+              <p>Chọn nội dung phù hợp với em</p>
+            </div>
+          </div>
 
-     <footer className="app-footer">
+          <div className="filters">
+            <input
+              value={tuKhoa}
+              onChange={(e) => setTuKhoa(e.target.value)}
+              placeholder="Tìm tên đề, chủ đề, ngữ liệu..."
+            />
 
-  <div className="footer-main">
-    <strong>
-      Ngân hàng đề tự luận Ngữ văn THCS
-    </strong>
+            <select value={lop} onChange={(e) => setLop(e.target.value)}>
+              <option>Tất cả</option>
+              <option>6</option>
+              <option>7</option>
+              <option>8</option>
+              <option>9</option>
+            </select>
 
-    <span>
-      Học tập mỗi ngày • Tiến bộ mỗi ngày
-    </span>
-  </div>
+            <select value={nhom} onChange={(e) => setNhom(e.target.value)}>
+              <option>Tất cả</option>
+              <option>Thơ</option>
+              <option>Truyện</option>
+              <option>Nghị luận xã hội</option>
+              <option>Nghị luận văn học</option>
+              <option>Viết đoạn văn</option>
+              <option>Đề tổng hợp</option>
+            </select>
 
-  <div className="footer-credit">
-    <p>
-      App được tạo bởi
-      <strong> GV: Trần Thị Nguyệt Hồng</strong>
-    </p>
+            <select value={theLoai} onChange={(e) => setTheLoai(e.target.value)}>
+              <option>Tất cả</option>
+              {THE_LOAI_THO.map((x) => (
+                <option key={x}>{x}</option>
+              ))}
+            </select>
+          </div>
+        </div>
 
-    <p>
-      Giáo viên Ngữ văn • Trường THCS Long Cang, Tây Ninh
-    </p>
+        <div className="summary">
+          ✨ Tìm thấy <strong>{danhSach.length}</strong> đề phù hợp
+        </div>
 
-    <p>
-      Zalo: <strong>0933122900</strong>
-    </p>
-  </div>
+        {loading && <div className="notice">Đang tải ngân hàng đề...</div>}
 
-</footer>
+        {error && (
+          <div className="notice error">
+            Không tải được dữ liệu: {error}
+          </div>
+        )}
+
+        {!loading && !error && danhSach.length === 0 && (
+          <div className="notice">
+            Chưa có đề phù hợp với bộ lọc hiện tại.
+          </div>
+        )}
+
+        <div className="list-view">
+          {danhSach.map((item) => (
+            <article className={`line-card ${taoMauThe(item.id)}`} key={item.id}>
+              <div className="line-card-top">
+                <div className="line-badges">
+                  <span className="pill">🎓 Lớp {item.lop || "—"}</span>
+                  <span className="pill light">
+                    📖 {item.the_loai || item.nhom || "Ngữ văn"}
+                  </span>
+                </div>
+
+                <div className="de-id">Đề {item.id}</div>
+              </div>
+
+              <h3 className="line-title">{item.tieu_de}</h3>
+
+              <p className="line-meta">
+                ✍️ {item.dang_bai || "Tự luận"}
+                {item.so_diem ? ` • ⭐ ${item.so_diem} điểm` : ""}
+                {item.thoi_gian ? ` • ⏱ ${item.thoi_gian} phút` : ""}
+              </p>
+
+              {item.chu_de && <p className="line-topic">Chủ đề: {item.chu_de}</p>}
+
+              <button className="open-btn" onClick={() => setDeDangMo(item)}>
+                Mở đề luyện tập →
+              </button>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      {deDangMo && (
+        <div className="exam-overlay">
+          <button className="close-exam" onClick={() => setDeDangMo(null)}>
+            Thu gọn đề ▲
+          </button>
+
+          <div className="exam-sheet">
+            <div className="exam-sheet-top">
+              <div>
+                <div className="exam-mini-label">ĐỀ LUYỆN TẬP</div>
+                <h2>{deDangMo.tieu_de}</h2>
+              </div>
+
+              <div className="exam-score">
+                {deDangMo.so_diem ? `${deDangMo.so_diem}` : "10"}
+                <span>điểm</span>
+              </div>
+            </div>
+
+            {deDangMo.ngu_lieu && (
+              <section className="exam-block">
+                <h3>PHẦN I. NGỮ LIỆU</h3>
+                <div className="exam-text">{deDangMo.ngu_lieu}</div>
+              </section>
+            )}
+
+            {deDangMo.cau_hoi && (
+              <section className="exam-block">
+                <h3>PHẦN II. CÂU HỎI</h3>
+                <div className="exam-text">{deDangMo.cau_hoi}</div>
+              </section>
+            )}
+
+            {!deDangMo.ngu_lieu && !deDangMo.cau_hoi && (
+              <section className="exam-block">
+                <div className="exam-empty">
+                  Đề này chưa được chuẩn hóa nội dung hiển thị.
+                </div>
+              </section>
+            )}
+
+            {deDangMo.file_url && (
+              <div className="exam-file-link">
+                <a href={deDangMo.file_url} target="_blank" rel="noreferrer">
+                  Mở file đính kèm
+                </a>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      <footer className="site-footer">
+        <div>Ngân hàng đề tự luận Ngữ văn THCS</div>
+        <div>Học tập mỗi ngày • Tiến bộ mỗi ngày</div>
+        <div className="footer-owner">
+          App được tạo bởi GV: TRẦN THỊ NGUYỆT HỒNG - Giáo viên Ngữ văn Trường THCS Long Cang, Tây Ninh. Zalo: 0933122900.
+        </div>
+      </footer>
     </main>
   );
 }
