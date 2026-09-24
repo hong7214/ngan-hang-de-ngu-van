@@ -2108,3 +2108,201 @@ body:has(.detail) {
     font-size: 23px !important;
   }
 }
+/* ==================================================
+   FIX LỖI MỞ ĐỀ TOÀN MÀN HÌNH BỊ CHỒNG / NHẤP NHÁY
+   DÁN Ở CUỐI CÙNG globals.css
+================================================== */
+
+/* Quan trọng:
+   Khi đề đang mở, vô hiệu hóa transform của thẻ cha.
+   Nếu card có transform thì position:fixed bên trong
+   sẽ không còn bám đúng theo màn hình. */
+
+.card:has(.detail),
+.card:has(.detail):hover {
+  transform: none !important;
+  translate: none !important;
+  scale: none !important;
+  rotate: none !important;
+
+  filter: none !important;
+  perspective: none !important;
+
+  transition: none !important;
+  animation: none !important;
+
+  z-index: 999999 !important;
+}
+
+/* Phần đề phải phủ kín thật sự toàn màn hình */
+
+.card:has(.detail) .detail {
+  position: fixed !important;
+
+  inset: 0 !important;
+
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+
+  width: 100vw !important;
+  height: 100vh !important;
+
+  width: 100dvw !important;
+  height: 100dvh !important;
+
+  max-width: none !important;
+  max-height: none !important;
+
+  margin: 0 !important;
+
+  padding:
+    85px
+    clamp(16px, 5vw, 80px)
+    50px !important;
+
+  background: #fffafd !important;
+
+  opacity: 1 !important;
+
+  border: none !important;
+  border-radius: 0 !important;
+
+  box-shadow: none !important;
+
+  transform: none !important;
+  filter: none !important;
+  backdrop-filter: none !important;
+
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
+
+  overscroll-behavior: contain !important;
+
+  z-index: 2147483000 !important;
+
+  isolation: isolate !important;
+}
+
+/* Khóa trang ở phía sau */
+
+body:has(.card .detail) {
+  overflow: hidden !important;
+}
+
+/* Đề phòng grid hoặc container có hiệu ứng transform */
+
+.grid:has(.detail),
+.container:has(.detail) {
+  transform: none !important;
+  filter: none !important;
+  perspective: none !important;
+}
+
+/* ==================================================
+   NÚT THU GỌN
+================================================== */
+
+.card:has(.detail) .primary {
+  position: fixed !important;
+
+  top: 18px !important;
+  right: 24px !important;
+
+  left: auto !important;
+  bottom: auto !important;
+
+  width: auto !important;
+  min-width: 170px !important;
+
+  margin: 0 !important;
+
+  padding: 12px 20px !important;
+
+  background:
+    linear-gradient(
+      135deg,
+      #ec4899,
+      #be185d
+    ) !important;
+
+  color: #ffffff !important;
+
+  border: none !important;
+  border-radius: 12px !important;
+
+  box-shadow:
+    0 8px 25px
+    rgba(190, 24, 93, 0.25) !important;
+
+  transform: none !important;
+
+  z-index: 2147483640 !important;
+}
+
+/* ==================================================
+   KHUNG NỘI DUNG ĐỀ
+================================================== */
+
+.card:has(.detail) .detail-heading,
+.card:has(.detail) .exam-content,
+.card:has(.detail) .exam-note {
+  position: relative !important;
+  z-index: 1 !important;
+}
+
+.card:has(.detail) .exam-content {
+  width: 100% !important;
+  max-width: 1150px !important;
+
+  margin: 0 auto !important;
+
+  background: #ffffff !important;
+
+  opacity: 1 !important;
+
+  font-family:
+    "Times New Roman",
+    Times,
+    serif !important;
+
+  font-size: 20px !important;
+  line-height: 1.75 !important;
+
+  color: #222222 !important;
+
+  white-space: pre-wrap !important;
+}
+
+/* ==================================================
+   ĐIỆN THOẠI
+================================================== */
+
+@media (max-width: 700px) {
+
+  .card:has(.detail) .detail {
+    padding:
+      70px
+      12px
+      30px !important;
+  }
+
+  .card:has(.detail) .primary {
+    top: 10px !important;
+    right: 10px !important;
+
+    min-width: 135px !important;
+
+    padding:
+      10px
+      13px !important;
+
+    font-size: 13px !important;
+  }
+
+  .card:has(.detail) .exam-content {
+    font-size: 17px !important;
+    line-height: 1.7 !important;
+  }
+}
