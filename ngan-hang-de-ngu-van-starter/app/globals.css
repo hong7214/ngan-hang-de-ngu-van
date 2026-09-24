@@ -1319,3 +1319,18 @@ main {
       #555 !important;
   }
 }
+/* THU NHỎ TIÊU ĐỀ ĐỀ TRONG CHẾ ĐỘ TOÀN MÀN HÌNH */
+
+.exam-paper-head h1 {
+  font-size: 24px !important;
+  line-height: 1.35 !important;
+  font-weight: 800 !important;
+}
+
+/* Trên điện thoại nhỏ hơn nữa */
+
+@media (max-width: 700px) {
+  .exam-paper-head h1 {
+    font-size: 20px !important;
+  }
+}
